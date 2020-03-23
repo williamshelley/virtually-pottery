@@ -1,12 +1,12 @@
 body {
   margin: 0 auto;
-  padding: 10px;
+  padding: 1vw;
   font-family: 'avenir', sans-serif;
   color: #1d2129;
 }
 
 section {
-  margin: 15px 0;
+  margin: 1.5vw 0;
 }
 
 h3,
@@ -15,30 +15,30 @@ h4 {
 }
 
 .header span {
-  font-size: 13px;
-  margin: 0 5px 0 0;
+  font-size: 1.3vw;
+  margin: 0 0.5vw 0 0;
 }
 
 .header p {
-  font-size: 17px;
-  margin-top: 15px;
+  font-size: 1.7vw;
+  margin-top: 1.5vw;
 }
 
 .item p {
   margin: 0;
-  font-size: 14px;
+  font-size: 1.4vw;
 }
 
 .divider {
   background: black;
-  height: 2px;
+  height: 0.2vw;
   width: 100%;
-  border-radius: 1px;
-  margin: 2px auto;
+  border-radius: 0.1vw;
+  margin: 0.2vw auto;
 }
 
 .item {
-  margin: 10px 0;
+  margin: 2vw 0;
 }
 
 .item-header * {
@@ -47,46 +47,47 @@ h4 {
 
 .item-header p {
   float: right;
-  margin-top: 2px;
+  margin-top: 0.2vw;
 }
 
 ul {
-  padding-inline-start: 30px;
-  margin: 0;
-  font-size: 15px;
+  padding-inline-start: 3vw;
+  margin: 0vw;
+  font-size: 1.5vw;
 }
 
 .nav-header {
   display: flex;
   background-color: black;
   color: white;
-  font-size: 20;
   list-style-type: none;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  padding-right:1vw;
+  padding-left:1vw;
 }
 
 .nav-item {
   flex: content;
-  padding:5px;
+  padding:0.1vw;
   color: white;
   background-color: gray;
-  font-size: 20px;
+  font-size: 2vw;
   display: flex;
-  margin: 4px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 0.5vw;
+  padding-right: 1vw;
+  padding-left: 1vw;
   text-align: center;
 }
 
 div iframe  {
     border: 0;
-    height: 100px;
+    height: 5vw;
     width: 100%;
  }
 
-.nav-iframe {
-    width: 100%;
-    height: 70px;
+h1 {
+  text-align: center;
+  font-size: 4vw;
 }

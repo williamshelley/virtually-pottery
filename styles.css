@@ -82,11 +82,11 @@ ul {
 
 div iframe  {
     border: 0;
-    height: 100%;
+    height: 100px;
     width: 100%;
  }
 
 .nav-iframe {
     width: 100%;
-    height: 100%;
+    height: 70px;
 }

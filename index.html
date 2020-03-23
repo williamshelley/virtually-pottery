@@ -4,26 +4,64 @@
 
 <head>
   <link rel="stylesheet" href="styles.css"/>
+  <style>
+    li {
+      font-size: 25;
+    }
+    img {
+      object-fit: contain;
+      height: 100px;
+      margin-right: 5px;
+    }
+    .project-wrapper {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100px;
+      align-items: center;
+      justify-content: flex-start;
+      background-color: coral;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      padding: 5px;
+    }
+    .project-details {
+      display: flex;
+      flex-direction: column;
+    }
+    div h1 {
+      display: flex;
+      align-items: center;
+    }
+  </style>
 </head>
 <body>
-  
+
   <div>
     <iframe src="navbar.html" frameborder="0"></iframe>
   </div>
-
-  <div id="html-test">
-    
+  <div>
+    <h1>Projects</h1>
+  </div>
+  <div class="project-wrapper">
+    <img src="" >
+    <div class="project-details">
+      Adirondack Film Festival App
+    </div>
+    <ul>
+      <li>Developed in 2020 (testing)</li>
+    </ul>
   </div>
 
-  <script>
-    var wrapper = document.getElementById("html-test");
-    var myHTML = "<ul>";
-    for (var i = 0; i < 10; i++){
-      myHTML += "<li>Project " + String(i) + "</li>";
-    }
-    myHTML += "</ul>";
-    wrapper.innerHTML = myHTML;
-  </script>
+  <div class="project-wrapper">
+    <img src="https://is4-ssl.mzstatic.com/image/thumb/Purple123/v4/93/e5/23/93e5237a-cdb8-1772-8633-7739cc095c61/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/438x0w.jpg" >
+    <div class="project-details">
+      <a href="https://apps.apple.com/us/app/wordgrab/id1484426601">WordGrab</a>
+    </div>
+    <ul>
+      <li>Released in 2019</li>
+    </ul>
+  </div>
 
 </body>
 

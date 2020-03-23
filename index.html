@@ -1,0 +1,30 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div>
+    <iframe src="navbar.html" frameborder="0"></iframe>
+  </div>
+
+  <div id="html-test">
+    
+  </div>
+
+  <script>
+    var wrapper = document.getElementById("html-test");
+    var myHTML = "<ul>";
+    for (var i = 0; i < 10; i++){
+      myHTML += "<li>Project " + String(i) + "</li>";
+    }
+    myHTML += "</ul>";
+    wrapper.innerHTML = myHTML;
+  </script>
+
+
+</body>
+
+</html>

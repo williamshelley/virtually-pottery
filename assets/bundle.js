@@ -126,52 +126,7 @@ var _require2 = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/uti
 // import "./assets/stylesheets/default.scss";
 
 document.addEventListener("DOMContentLoaded", function () {
-  // var THREEx = {};
-  // initializeDomEvents(THREE, THREEx);
-  // console.log(initializeDomEvents);
   var root = document.getElementById("root");
-  var bookShow = document.createElement("div");
-  bookShow.className = "book-show";
-  bookShow.innerHTML += div({
-    className: "book",
-    children: [div({
-      className: "page-left",
-      children: ["Left"]
-    }), div({
-      className: "page-right",
-      children: ["Right"]
-    })]
-  }); // root.innerHTML += div({
-  //   children: [
-  //     h1({
-  //       children: ["h1", "Testing", "1", "2", p({
-  //         children: ["3"]
-  //       })]
-  //     }),
-  //     h2({
-  //       children: ["h2"]
-  //     }),
-  //     h3({
-  //       children: ["h3"]
-  //     })
-  //   ]
-  // });
-  // let c1 = h3Node({
-  //   innerText: "h3 child of h1"
-  // });
-  // let c2 = h3Node({
-  //   innerText: "h3 child of h1"
-  // });
-  // let c3 = h3Node({
-  //   innerText: "h3 child of h1"
-  // });
-  // let h1Child = divNode({
-  //   innerText: "This is an h1 child!",
-  //   children: [c1, c2, c3]
-  // });
-  // h1Child.addEventListener("click", () => console.log("hello"))
-  // root.appendChild(h1Child);
-
   var scene = createScene();
   var camera = createCamera();
   var renderer = createRenderer();
@@ -182,40 +137,93 @@ document.addEventListener("DOMContentLoaded", function () {
     camera: camera
   };
   var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
-  var shelfLength = 50;
-  var shelfHeight = 32;
-  var rightShelfGeo = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](shelfLength, 20, shelfHeight);
-  var leftShelfGeo = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](shelfLength, 20, shelfHeight);
-  var shelfMat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-    map: loader.load('assets/images/empty_shelf.jpg')
-  });
-  var initialShelfTranslationZ = -10;
-  var initialShelfTranslationX = 8;
-  var initialShelfRotationY = 1.5;
-  var rightShelf = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](rightShelfGeo, shelfMat);
-  rightShelf.translateZ(initialShelfTranslationZ);
-  rightShelf.translateX(initialShelfTranslationX);
-  rightShelf.rotation.y = -initialShelfRotationY;
-  var leftShelf = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](leftShelfGeo, shelfMat);
-  leftShelf.translateZ(initialShelfTranslationZ);
-  leftShelf.translateX(-initialShelfTranslationX);
-  leftShelf.rotation.y = initialShelfRotationY;
-  var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](3, 3, 3), new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
+  root.appendChild(renderer.domElement);
+  var sphere = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](1, 3, 3), new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
     color: 0xffffff
   }));
-  cube.position.z = -10;
-  scene.add(cube);
-  scene.add(rightShelf);
-  scene.add(leftShelf);
-  root.appendChild(renderer.domElement); // let bookShow = createNode({ tag: "div",className: "book-show", children: ["This is a book"] });
+  scene.add(sphere);
+  var points = [];
 
-  cube.onClick(function (obj) {
-    root.appendChild(bookShow);
-  }, eventListenerInfo); // rightShelf.onClick(obj => alert("right shelf"), eventListenerInfo);
-  // leftShelf.onClick(obj => alert("left shelf"), eventListenerInfo);
+  for (var i = 0; i < 10; i++) {
+    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(0.2) * 10 + 5, (i - 5) * 2));
+  }
+
+  var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
+  var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
+    map: loader.load("./assets/images/earthenware.jpg")
+  });
+  var lathe = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, material);
+  scene.add(lathe);
+  lathe.onClick(function (obj, mouse) {// console.log(lathe.geometry.vertices);
+    // console.log(mouse);
+  }, eventListenerInfo);
+  var radius = 0.1;
+  var moving = false;
+  var dragVec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+  var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+
+  function onDrag() {
+    dragVec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, sphere.position.z);
+    dragVec.unproject(camera);
+    dragVec.sub(camera.position).normalize();
+    var distance = (sphere.position.z - camera.position.z) / dragVec.z;
+    dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance));
+    console.log(dragPos);
+  }
+
+  function mouseDrag(event) {
+    // console.log("hallo");
+    if (event.type === "mousedown") {
+      moving = true;
+      onDrag();
+    }
+
+    if (event.type === "mouseup") {
+      moving = false;
+    }
+
+    if (event.type === "mousemove" && moving) {
+      // console.log("dragging");
+      onDrag();
+    } // if (event.type === "mousedown") {
+    // }
+    // for (let i = 0; i < circle.geometry.vertices.length; i++) {
+    // for (let j = 0; j < lathe.geometry.vertices.length; j++) {
+    // for (var vertexIndex = 0; vertexIndex < lathe.geometry.vertices.length; vertexIndex++) {
+    //   var localVertex = lathe.geometry.vertices[vertexIndex].clone();
+    //   var globalVertex = localVertex.applyMatrix4(lathe.matrix);
+    //   var directionVector = globalVertex.sub(lathe.position);
+    //   var ray = new THREE.Raycaster(lathe.position, directionVector.clone().normalize());
+    //   var collisionResults = ray.intersectObjects(scene.children);
+    //   if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+    //     console.log(globalVertex);
+    //   }
+    // }
+    // }
+
+  }
+
+  window.addEventListener("mousedown", mouseDrag, false);
+  window.addEventListener("mouseup", mouseDrag, false);
+  window.addEventListener("mousemove", mouseDrag, false);
+  var mouse = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]();
+  var pos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+  sphere.position.z = -39;
+  var vec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+  window.addEventListener("mousemove", function (event) {
+    vec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, sphere.position.z);
+    vec.unproject(camera);
+    vec.sub(camera.position).normalize();
+    var distance = (sphere.position.z - camera.position.z) / vec.z;
+    pos.copy(camera.position).add(vec.multiplyScalar(distance));
+    sphere.position.x = pos.x;
+    sphere.position.y = pos.y;
+    sphere.position.z = pos.z;
+  });
+  lathe.position.z = -40;
 
   function animateObjects() {
-    cube.rotation.y += 0.01;
+    lathe.rotation.y += 0.01;
   }
 
   window.scene = scene;
@@ -51571,8 +51579,7 @@ var html = function html(_ref3) {
     key: "class",
     value: className
   });
-  console.log(className); // alert("hello");
-
+  console.log(className);
   return "<".concat(tag, " ").concat(id, " ").concat(className, ">").concat(children.join(""), "</").concat(tag, ">");
 };
 
@@ -51673,12 +51680,33 @@ function animate(renderer, scene, camera, action) {
   renderer.render(scene, camera);
 }
 
-var onClick = function onClick(action, _ref) {
+var onMove = function onMove(action, _ref) {
   var _this = this;
 
   var raycaster = _ref.raycaster,
       scene = _ref.scene,
       camera = _ref.camera;
+  var mouse = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]();
+  window.addEventListener("mousemove", function (event) {
+    mouse.x = event.clientX / window.innerWidth * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(scene.children);
+
+    for (var i = 0; i < intersects.length; i++) {
+      if (intersects[i].object.uuid === _this.uuid) {
+        action(_this, mouse);
+      }
+    }
+  });
+};
+
+var onClick = function onClick(action, _ref2) {
+  var _this2 = this;
+
+  var raycaster = _ref2.raycaster,
+      scene = _ref2.scene,
+      camera = _ref2.camera;
   var mouse = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]();
   window.addEventListener("click", function (event) {
     mouse.x = event.clientX / window.innerWidth * 2 - 1;
@@ -51687,16 +51715,15 @@ var onClick = function onClick(action, _ref) {
     var intersects = raycaster.intersectObjects(scene.children);
 
     for (var i = 0; i < intersects.length; i++) {
-      if (intersects[i].object.uuid === _this.uuid) {
-        console.log(_this.position);
-        action(_this);
+      if (intersects[i].object.uuid === _this2.uuid) {
+        action(_this2, mouse);
       }
     }
   });
 };
 
 three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onClick = onClick;
-three__WEBPACK_IMPORTED_MODULE_0__["Group"].prototype.onClick = onClick;
+three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onMove = onMove;
 
 /***/ })
 

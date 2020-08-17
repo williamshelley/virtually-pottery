@@ -49,7 +49,6 @@ const html = ({ tag, id, className, children, onClick }) => {
   id = attr("id", id);
   className = attr({key:"class", value:className});
   console.log(className);
-  // alert("hello");
 
 
   return (

@@ -122,12 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   root.appendChild(renderer.domElement);
 
-  cube.onClick(obj => console.log(obj.value), eventListenerInfo);
-  rightShelf.onClick(obj => console.log("right"), eventListenerInfo);
-  leftShelf.onClick(obj => console.log("left"), eventListenerInfo);
-
-  var int = raycaster.intersectObjects(scene.children);
-  console.log(int)
+  cube.onClick(obj => alert("cube"), eventListenerInfo);
+  rightShelf.onClick(obj => alert("right shelf"), eventListenerInfo);
+  leftShelf.onClick(obj => alert("left shelf"), eventListenerInfo);
 
   function animateObjects() {
     cube.rotation.y += 0.01;

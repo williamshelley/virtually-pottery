@@ -21,8 +21,10 @@ export function createRenderer() {
 
 export function animate(renderer, scene, camera, action) {
   let _animate = animate.bind(this, renderer, scene, camera, action);
-  requestAnimationFrame( _animate );
   action({ scene, camera });
+//   setTimeout( function() {
+  requestAnimationFrame( _animate );
+  // }, 1000 / 900 );
   renderer.render(scene, camera);
 }
 

@@ -144,35 +144,76 @@ document.addEventListener("DOMContentLoaded", function () {
   scene.add(sphere);
   var points = [];
 
-  for (var i = 0; i < 10; i++) {
-    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(0.2) * 10 + 5, (i - 5) * 2));
+  for (var i = 0; i < 20; i++) {
+    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(0.2) * 10 + 5, i - 5));
   }
 
-  var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
+  var latheGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
   var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
     map: loader.load("./assets/images/earthenware.jpg")
   });
-  var lathe = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, material);
+  var lathe = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](latheGeo, material);
   scene.add(lathe);
   lathe.onClick(function (obj, mouse) {// console.log(lathe.geometry.vertices);
     // console.log(mouse);
   }, eventListenerInfo);
+  lathe.position.y = -5;
   var radius = 0.1;
   var moving = false;
+  var specialKeyDown = false;
   var dragVec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-  var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+  var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](); // console.log(lathe.geometry.vertices);
+
+  var arrAmt = points.map(function (point) {
+    return 1.0;
+  });
+  var modifier = 0.02; //pedal
 
   function onDrag() {
+    var pullSpeed = modifier;
+    var pullDirection = specialKeyDown === true ? -1 : 1;
     dragVec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, sphere.position.z);
     dragVec.unproject(camera);
     dragVec.sub(camera.position).normalize();
     var distance = (sphere.position.z - camera.position.z) / dragVec.z;
-    dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance));
-    console.log(dragPos);
+    dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance)); // console.log(lathe.geometry.vertices);
+
+    lathe.geometry.verticesNeedUpdate = true; // console.log(dragPos);
+
+    for (var _i = 0; _i < lathe.geometry.vertices.length; _i++) {
+      if (dragPos.y <= lathe.geometry.vertices[_i].y + 0.5 && dragPos.y >= lathe.geometry.vertices[_i].y - 0.5) {
+        var newPoints = [];
+
+        for (var j = 0; j < 30; j++) {
+          if (j !== _i && j !== _i - 1 && j !== _i + 1) {
+            newPoints.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(arrAmt[j] * 0.2) * 10 + 5, j - 5));
+          } else {
+            // arrAmt[i] += arrAmt[i] += pullDirection * pullSpeed;
+            if (arrAmt[_i] <= 10 && arrAmt[_i] >= 0 || arrAmt[_i] > 10 && pullDirection < 0 || arrAmt[_i] >= 0 && arrAmt[_i] <= 10 || arrAmt[_i] < 0 && pullDirection > 0) {
+              arrAmt[_i] += pullDirection * pullSpeed;
+            }
+
+            newPoints.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(arrAmt[j] * 0.2) * 10 + 5, j - 5));
+          }
+        }
+
+        lathe.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints); // }
+        // lathe.geometry.vertices[i].position = new THREE.Vector2(Math.sin(0.2 * 10 + 5, (i - 5) * 2));
+        // lathe.geometry.vertices[ i ].y = dragPos.z;
+      } // console.log(lathe);
+
+    }
   }
 
   function mouseDrag(event) {
     // console.log("hallo");
+    if (event.type === "keypress") {
+      specialKeyDown = !specialKeyDown;
+    } // if (event.type === "keyup") {
+    //   specialKeyDown = false;
+    // }
+
+
     if (event.type === "mousedown") {
       moving = true;
       onDrag();
@@ -185,23 +226,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (event.type === "mousemove" && moving) {
       // console.log("dragging");
       onDrag();
-    } // if (event.type === "mousedown") {
-    // }
-    // for (let i = 0; i < circle.geometry.vertices.length; i++) {
-    // for (let j = 0; j < lathe.geometry.vertices.length; j++) {
-    // for (var vertexIndex = 0; vertexIndex < lathe.geometry.vertices.length; vertexIndex++) {
-    //   var localVertex = lathe.geometry.vertices[vertexIndex].clone();
-    //   var globalVertex = localVertex.applyMatrix4(lathe.matrix);
-    //   var directionVector = globalVertex.sub(lathe.position);
-    //   var ray = new THREE.Raycaster(lathe.position, directionVector.clone().normalize());
-    //   var collisionResults = ray.intersectObjects(scene.children);
-    //   if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-    //     console.log(globalVertex);
-    //   }
-    // }
-    // }
+    }
+  } // window.addEventListener("keydown", mouseDrag, false);
 
-  }
+
+  window.addEventListener("keypress", mouseDrag, false); // window.addEventListener("keyup", mouseDrag, false);
 
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
@@ -223,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
   lathe.position.z = -40;
 
   function animateObjects() {
-    lathe.rotation.y += 0.01;
+    lathe.rotation.y += 0.03;
   }
 
   window.scene = scene;
@@ -51672,11 +51701,13 @@ function createRenderer() {
 function animate(renderer, scene, camera, action) {
   var _animate = animate.bind(this, renderer, scene, camera, action);
 
-  requestAnimationFrame(_animate);
   action({
     scene: scene,
     camera: camera
-  });
+  }); //   setTimeout( function() {
+
+  requestAnimationFrame(_animate); // }, 1000 / 900 );
+
   renderer.render(scene, camera);
 }
 

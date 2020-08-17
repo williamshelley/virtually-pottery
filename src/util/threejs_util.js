@@ -26,7 +26,7 @@ export function animate(renderer, scene, camera, action) {
   renderer.render(scene, camera);
 }
 
-THREE.Mesh.prototype.onClick = function(action, { raycaster, scene, camera }) {
+const onClick = function(action, { raycaster, scene, camera }) {
   let mouse = new THREE.Vector2();
   window.addEventListener("click", event => {
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -36,8 +36,13 @@ THREE.Mesh.prototype.onClick = function(action, { raycaster, scene, camera }) {
     let intersects = raycaster.intersectObjects(scene.children);
     for ( let i = 0; i < intersects.length; i++ ) {
       if (intersects[i].object.uuid === this.uuid) {
+        console.log(this.position)
         action(this);
       }
     }
   })
 }
+
+THREE.Mesh.prototype.onClick = onClick;
+
+THREE.Group.prototype.onClick = onClick;

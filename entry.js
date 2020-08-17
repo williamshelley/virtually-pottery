@@ -36,6 +36,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // console.log(initializeDomEvents);
 
   const root = document.getElementById("root");
+
+  const bookShow = document.createElement("div");
+  bookShow.className = "book-show";
+
+  bookShow.innerHTML += div({ className: "book", children: [
+    div({ className: "page-left", children: ["Left"]}),
+    div({ className: "page-right", children: ["Right"]})
+  ] });
+
   // root.innerHTML += div({
   //   children: [
   //     h1({
@@ -73,7 +82,13 @@ document.addEventListener("DOMContentLoaded", () => {
   var scene = createScene();
   var camera = createCamera();
   var renderer = createRenderer();
-  const loader = new THREE.TextureLoader();
+  var raycaster = new THREE.Raycaster();
+  var eventListenerInfo = {
+    raycaster,
+    scene,
+    camera
+  };
+  let loader = new THREE.TextureLoader();
 
   let shelfLength = 50;
   let shelfHeight = 32;
@@ -106,25 +121,21 @@ document.addEventListener("DOMContentLoaded", () => {
       color: 0xffffff
     })
   );
-
-  var raycaster = new THREE.Raycaster();
-  var eventListenerInfo = {
-    raycaster,
-    scene,
-    camera
-  };
-
   cube.position.z = -10;
-  cube.value = "YAY!";
+
   scene.add(cube);
   scene.add(rightShelf);
   scene.add(leftShelf);
 
   root.appendChild(renderer.domElement);
 
-  cube.onClick(obj => alert("cube"), eventListenerInfo);
-  rightShelf.onClick(obj => alert("right shelf"), eventListenerInfo);
-  leftShelf.onClick(obj => alert("left shelf"), eventListenerInfo);
+  // let bookShow = createNode({ tag: "div",className: "book-show", children: ["This is a book"] });
+
+  cube.onClick(obj => {
+    root.appendChild(bookShow);
+  }, eventListenerInfo);
+  // rightShelf.onClick(obj => alert("right shelf"), eventListenerInfo);
+  // leftShelf.onClick(obj => alert("left shelf"), eventListenerInfo);
 
   function animateObjects() {
     cube.rotation.y += 0.01;

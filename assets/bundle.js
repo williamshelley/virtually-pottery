@@ -129,7 +129,19 @@ document.addEventListener("DOMContentLoaded", function () {
   // var THREEx = {};
   // initializeDomEvents(THREE, THREEx);
   // console.log(initializeDomEvents);
-  var root = document.getElementById("root"); // root.innerHTML += div({
+  var root = document.getElementById("root");
+  var bookShow = document.createElement("div");
+  bookShow.className = "book-show";
+  bookShow.innerHTML += div({
+    className: "book",
+    children: [div({
+      className: "page-left",
+      children: ["Left"]
+    }), div({
+      className: "page-right",
+      children: ["Right"]
+    })]
+  }); // root.innerHTML += div({
   //   children: [
   //     h1({
   //       children: ["h1", "Testing", "1", "2", p({
@@ -163,6 +175,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var scene = createScene();
   var camera = createCamera();
   var renderer = createRenderer();
+  var raycaster = new three__WEBPACK_IMPORTED_MODULE_0__["Raycaster"]();
+  var eventListenerInfo = {
+    raycaster: raycaster,
+    scene: scene,
+    camera: camera
+  };
   var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
   var shelfLength = 50;
   var shelfHeight = 32;
@@ -185,27 +203,16 @@ document.addEventListener("DOMContentLoaded", function () {
   var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](3, 3, 3), new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
     color: 0xffffff
   }));
-  var raycaster = new three__WEBPACK_IMPORTED_MODULE_0__["Raycaster"]();
-  var eventListenerInfo = {
-    raycaster: raycaster,
-    scene: scene,
-    camera: camera
-  };
   cube.position.z = -10;
-  cube.value = "YAY!";
   scene.add(cube);
   scene.add(rightShelf);
   scene.add(leftShelf);
-  root.appendChild(renderer.domElement);
+  root.appendChild(renderer.domElement); // let bookShow = createNode({ tag: "div",className: "book-show", children: ["This is a book"] });
+
   cube.onClick(function (obj) {
-    return alert("cube");
-  }, eventListenerInfo);
-  rightShelf.onClick(function (obj) {
-    return alert("right shelf");
-  }, eventListenerInfo);
-  leftShelf.onClick(function (obj) {
-    return alert("left shelf");
-  }, eventListenerInfo);
+    root.appendChild(bookShow);
+  }, eventListenerInfo); // rightShelf.onClick(obj => alert("right shelf"), eventListenerInfo);
+  // leftShelf.onClick(obj => alert("left shelf"), eventListenerInfo);
 
   function animateObjects() {
     cube.rotation.y += 0.01;
@@ -51560,7 +51567,12 @@ var html = function html(_ref3) {
       children = _ref3.children,
       onClick = _ref3.onClick;
   id = attr("id", id);
-  className = attr("class", id);
+  className = attr({
+    key: "class",
+    value: className
+  });
+  console.log(className); // alert("hello");
+
   return "<".concat(tag, " ").concat(id, " ").concat(className, ">").concat(children.join(""), "</").concat(tag, ">");
 };
 
@@ -51661,7 +51673,7 @@ function animate(renderer, scene, camera, action) {
   renderer.render(scene, camera);
 }
 
-three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onClick = function (action, _ref) {
+var onClick = function onClick(action, _ref) {
   var _this = this;
 
   var raycaster = _ref.raycaster,
@@ -51676,11 +51688,15 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onClick = function (action,
 
     for (var i = 0; i < intersects.length; i++) {
       if (intersects[i].object.uuid === _this.uuid) {
+        console.log(_this.position);
         action(_this);
       }
     }
   });
 };
+
+three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onClick = onClick;
+three__WEBPACK_IMPORTED_MODULE_0__["Group"].prototype.onClick = onClick;
 
 /***/ })
 

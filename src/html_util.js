@@ -47,7 +47,10 @@ const h3Node = (props) => {
 
 const html = ({ tag, id, className, children, onClick }) => {
   id = attr("id", id);
-  className = attr("class", id);
+  className = attr({key:"class", value:className});
+  console.log(className);
+  // alert("hello");
+
 
   return (
     `<${tag} ${id} ${className}>${children.join("")}</${tag}>`

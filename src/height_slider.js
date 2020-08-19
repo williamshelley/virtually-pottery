@@ -1,6 +1,5 @@
 import { toggleRootPanel } from "./util/panel_util";
 import { inputNode, divNode, pNode } from "./util/html_util";
-import { createPot } from "./pot";
 
 export function createHeightSlider(pot) {
   function _onInput() {
@@ -12,11 +11,9 @@ export function createHeightSlider(pot) {
 
   return divNode({
     id: "height-slider",
-    className: "height-slider",
     children: [
       inputNode({
         id: "height-slider-input",
-        className: "height-slider-input",
         type: "range",
         min: 5,
         max: 40,
@@ -25,7 +22,6 @@ export function createHeightSlider(pot) {
       }),
       pNode({
         id: "height-slider-value",
-        className: "height-slider-value",
         innerText: pot.numLevels
       })
     ]

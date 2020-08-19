@@ -1,0 +1,9 @@
+#pull-toggle {
+  display: flex;
+  background: #6AB187;
+  padding: 8px;
+}
+
+#pull-toggle > input {
+
+}

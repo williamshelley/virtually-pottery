@@ -1,11 +1,19 @@
-import { divNode } from "./util/html_util";
-import { toggleColorPalette } from "./color_palette";
-import { toggleHeightSlider } from "./height_slider";
+import {
+  divNode
+} from "./util/html_util";
+import {
+  toggleColorPalette
+} from "./color_palette";
+import {
+  toggleHeightSlider
+} from "./height_slider";
+import { togglePullToggle, createPullToggle } from "./pull_toggle";
 
-function sidebarNode(name, onClick) {
+function sidebarNode(name, onClick, children) {
   let node = (divNode({
     className: "sidebar-item",
     innerText: name,
+    children
   }));
 
   node.addEventListener("click", onClick, false);
@@ -14,11 +22,14 @@ function sidebarNode(name, onClick) {
 }
 
 export function createSidebar(pot) {
+  const PullToggle = createPullToggle(pot);
+
   return divNode({
     className: "sidebar",
     children: [
       sidebarNode("Choose Glaze", toggleColorPalette(pot)),
       sidebarNode("Change Pot Height", toggleHeightSlider(pot)),
+      sidebarNode("Collar or Flare", togglePullToggle(pot), [PullToggle])
     ]
-  })
+  });
 }

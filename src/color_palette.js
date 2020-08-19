@@ -1,16 +1,20 @@
-import { divNode, pNode, imgNode } from "./util/html_util";
-import { toggleRootPanel } from "./util/panel_util";
+import {
+  divNode,
+  pNode,
+  imgNode
+} from "./util/html_util";
+import {
+  toggleRootPanel
+} from "./util/panel_util";
 
 function colorOptionNode(name, src, onClick) {
   let node = (divNode({
     className: "color-palette-option",
     children: [
       pNode({
-        className: "color-palette-option-name",
         innerText: name,
       }),
       imgNode({
-        className: "color-palette-option-img",
         src
       }),
     ]
@@ -31,12 +35,13 @@ export function createColorPalette(pot) {
   function _src(img) {
     return `assets/images/${img}.png`;
   }
+
   function _onClick(newMaterial) {
     return e => {
       pot.changeMaterial(_src(newMaterial));
     }
   }
-  
+
   return divNode({
     id: "color-palette",
     className: "color-palette",

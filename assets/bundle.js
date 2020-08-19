@@ -51400,10 +51400,8 @@ function colorOptionNode(name, src, onClick) {
   var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "color-palette-option",
     children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
-      className: "color-palette-option-name",
       innerText: name
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["imgNode"])({
-      className: "color-palette-option-img",
       src: src
     })]
   });
@@ -51455,8 +51453,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleHeightSlider", function() { return toggleHeightSlider; });
 /* harmony import */ var _util_panel_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/panel_util */ "./src/util/panel_util.js");
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
-/* harmony import */ var _pot__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pot */ "./src/pot.js");
-
 
 
 function createHeightSlider(pot) {
@@ -51469,10 +51465,8 @@ function createHeightSlider(pot) {
 
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
     id: "height-slider",
-    className: "height-slider",
     children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
       id: "height-slider-input",
-      className: "height-slider-input",
       type: "range",
       min: 5,
       max: 40,
@@ -51480,7 +51474,6 @@ function createHeightSlider(pot) {
       onInput: _onInput
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
       id: "height-slider-value",
-      className: "height-slider-value",
       innerText: pot.numLevels
     })]
   });
@@ -51507,23 +51500,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 /* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
 /* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
+/* harmony import */ var _pull_toggle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pull_toggle */ "./src/pull_toggle.js");
 
 
 
 
-function sidebarNode(name, onClick) {
+
+function sidebarNode(name, onClick, children) {
   var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "sidebar-item",
-    innerText: name
+    innerText: name,
+    children: children
   });
   node.addEventListener("click", onClick, false);
   return node;
 }
 
 function createSidebar(pot) {
+  var PullToggle = Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["createPullToggle"])(pot);
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "sidebar",
-    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot))]
+    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot)), sidebarNode("Collar or Flare", Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["togglePullToggle"])(pot), [PullToggle])]
   });
 }
 
@@ -51543,7 +51540,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makePull", function() { return makePull; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onDrag", function() { return onDrag; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-
 
 
 var createPotPoint = function createPotPoint(_ref) {
@@ -51625,6 +51621,7 @@ function createPot(_ref2) {
   pot.maxWidth = maxWidth;
   pot.minWidth = minWidth;
   pot.position.z = zPosition;
+  pot.pullDirection = 1;
   var isMoving = false;
   var keyDown = false;
   var mouseDrag = onDrag({
@@ -51646,15 +51643,15 @@ var animatePot = function animatePot(pot) {
 var makePull = function makePull(_ref3) {
   var pot = _ref3.pot,
       event = _ref3.event,
-      keyDown = _ref3.keyDown,
       camera = _ref3.camera;
   var dragVec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
   var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
   var numLevels = pot.numLevels,
       deltaPerLevel = pot.deltaPerLevel,
       maxWidth = pot.maxWidth,
-      minWidth = pot.minWidth;
-  var pullDirection = keyDown === true ? -1 : 1;
+      minWidth = pot.minWidth,
+      pullDirection = pot.pullDirection,
+      pullSpeed = pot.pullSpeed;
   dragVec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, pot.position.z);
   dragVec.unproject(camera);
   dragVec.sub(camera.position).normalize();
@@ -51677,7 +51674,7 @@ var makePull = function makePull(_ref3) {
 
   for (var i = 0; i < numLevels; i++) {
     if (pointsToModify.has(i)) {
-      var amtToAdd = pullDirection * pot.pullSpeed;
+      var amtToAdd = pullDirection * pullSpeed;
       var newDelta = deltaPerLevel[i] + amtToAdd;
 
       if (newDelta < maxWidth && newDelta > minWidth) {
@@ -51704,12 +51701,11 @@ var makePull = function makePull(_ref3) {
 };
 var onDrag = function onDrag(_ref4) {
   var pot = _ref4.pot,
-      keyDown = _ref4.keyDown,
       isMoving = _ref4.isMoving,
       camera = _ref4.camera;
   return function (event) {
     if (event.type === "keypress") {
-      keyDown = !keyDown;
+      pot.pullDirection = -pot.pullDirection;
     }
 
     if (event.type === "mousedown") {
@@ -51723,7 +51719,6 @@ var onDrag = function onDrag(_ref4) {
     if (event.type === "mousemove" && isMoving) {
       makePull({
         pot: pot,
-        keyDown: keyDown,
         event: event,
         camera: camera
       });
@@ -51742,6 +51737,34 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (
   });
   this.material = newMaterial;
 };
+
+/***/ }),
+
+/***/ "./src/pull_toggle.js":
+/*!****************************!*\
+  !*** ./src/pull_toggle.js ***!
+  \****************************/
+/*! exports provided: createPullToggle, togglePullToggle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPullToggle", function() { return createPullToggle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "togglePullToggle", function() { return togglePullToggle; });
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+
+function createPullToggle(pot) {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    id: "pull-toggle",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["inputNode"])({
+      id: "pull-toggle-input",
+      type: "checkbox"
+    })]
+  });
+}
+function togglePullToggle(pot) {
+  pot.pullDirection = -pot.pullDirection;
+}
 
 /***/ }),
 

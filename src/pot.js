@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Vector2 } from "three";
 
 const createPotPoint = ({
   pot,
@@ -35,8 +34,11 @@ export function createPot({
   const loader = new THREE.TextureLoader();
   let points = [];
 
-  if (numLevels > maxLevels) { numLevels = maxLevels; }
-  else if (numLevels < minLevels) { numLevels = minLevels; }
+  if (numLevels > maxLevels) {
+    numLevels = maxLevels;
+  } else if (numLevels < minLevels) {
+    numLevels = minLevels;
+  }
 
   function callback(point) {
     points.push(point);
@@ -69,10 +71,16 @@ export function createPot({
   pot.maxWidth = maxWidth;
   pot.minWidth = minWidth;
   pot.position.z = zPosition;
+  pot.pullDirection = 1;
 
   let isMoving = false;
   let keyDown = false;
-  const mouseDrag = onDrag({ pot, keyDown, isMoving, camera });
+  const mouseDrag = onDrag({
+    pot,
+    keyDown,
+    isMoving,
+    camera
+  });
   window.addEventListener("keypress", mouseDrag, false);
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
@@ -88,7 +96,6 @@ export const animatePot = (pot, rotationSpeed = 0.03) => {
 export const makePull = ({
   pot,
   event,
-  keyDown,
   camera
 }) => {
   let dragVec = new THREE.Vector3();
@@ -97,10 +104,11 @@ export const makePull = ({
     numLevels,
     deltaPerLevel,
     maxWidth,
-    minWidth
+    minWidth,
+    pullDirection,
+    pullSpeed
   } = pot;
 
-  let pullDirection = (keyDown === true) ? -1 : 1;
   dragVec.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, pot.position.z);
 
 
@@ -125,7 +133,7 @@ export const makePull = ({
   const callback = point => newPoints.push(point);
   for (var i = 0; i < numLevels; i++) {
     if (pointsToModify.has(i)) {
-      let amtToAdd = pullDirection * pot.pullSpeed;
+      let amtToAdd = pullDirection * pullSpeed;
       let newDelta = deltaPerLevel[i] + amtToAdd;
 
       if (newDelta < maxWidth && newDelta > minWidth) {
@@ -137,27 +145,31 @@ export const makePull = ({
         level: i,
         callback,
         curve: deltaPerLevel[i]
-      })
+      });
     } else {
       createPotPoint({
         pot,
         level: i,
         callback,
         curve: deltaPerLevel[i]
-      })
+      });
     }
   }
 
   pot.geometry = new THREE.LatheGeometry(newPoints);
 }
 
-export const onDrag = ({ pot, keyDown, isMoving, camera }) => {
+export const onDrag = ({
+  pot,
+  isMoving,
+  camera
+}) => {
   return event => {
 
     if (event.type === "keypress") {
-      keyDown = !keyDown;
+      pot.pullDirection = -pot.pullDirection;
     }
-    
+
     if (event.type === "mousedown") {
       isMoving = true;
     }
@@ -165,9 +177,13 @@ export const onDrag = ({ pot, keyDown, isMoving, camera }) => {
     if (event.type === "mouseup") {
       isMoving = false;
     }
-    
+
     if (event.type === "mousemove" && isMoving) {
-      makePull({ pot, keyDown, event, camera })
+      makePull({
+        pot,
+        event,
+        camera
+      })
     }
   }
 }
@@ -176,7 +192,7 @@ Number.prototype.between = (num, min, max) => {
   return num >= min && num <= max;
 }
 
-THREE.Mesh.prototype.changeMaterial = function(newMaterialUrl) {
+THREE.Mesh.prototype.changeMaterial = function (newMaterialUrl) {
   const loader = new THREE.TextureLoader();
   const newMaterial = new THREE.MeshBasicMaterial({
     map: loader.load(newMaterialUrl)

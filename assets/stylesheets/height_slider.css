@@ -1,4 +1,4 @@
-.height-slider {
+#height-slider {
   display: flex;
   position: absolute;
   bottom: 0;
@@ -9,7 +9,7 @@
   padding: 8px;
 }
 
-.height-slider-value {
+#height-slider > p {
   color: white;
 }
 

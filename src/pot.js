@@ -1,5 +1,6 @@
 import * as THREE from "three";
 
+// creates a vector2 point and passes it to callback
 const createPotPoint = ({
   pot,
   numLevels,
@@ -20,6 +21,7 @@ const createPotPoint = ({
   callback(point);
 }
 
+// initialization returns a mesh object with LatheGeometry and texture
 export function createPot({
   radius,
   numLevels,
@@ -46,12 +48,7 @@ export function createPot({
   }
 
   for (let i = 0; i < numLevels; i++) {
-    createPotPoint({
-      radius,
-      level: i,
-      callback,
-      numLevels
-    });
+    createPotPoint({ radius, level: i, callback, numLevels });
   }
 
   while (points.length < maxLevels) {
@@ -74,15 +71,12 @@ export function createPot({
   pot.minWidth = minWidth;
   pot.position.z = zPosition - numLevels;
   pot.pullDirection = -1;
+  pot.smooth = false;
 
   let isMoving = false;
   let keyDown = false;
-  const mouseDrag = onDrag({
-    pot,
-    keyDown,
-    isMoving,
-    camera
-  });
+  const mouseDrag = onDrag({ pot, keyDown, isMoving });
+
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
   window.addEventListener("mousemove", mouseDrag, false);
@@ -94,92 +88,97 @@ export const animatePot = (pot, rotationSpeed = 0.03) => {
   pot.rotation.y += rotationSpeed;
 }
 
-export const makePull = ({
-  pot,
-  event,
-  camera
-}) => {
+
+// Wall smoothing based on average of point below and point above mouse pointer
+export const smoothWallPoints = (i, pot) => {
+  let { deltaPerLevel, numLevels, pullSpeed, maxWidth, minWidth } = pot;
+  const range = 1;
+  if (i >= range && i < numLevels - range) {
+    let amtToAdd = pullSpeed;
+    let newDelta = deltaPerLevel[i] + amtToAdd;
+    let avgDeltaSum = newDelta;
+    let numElements = 1;
+
+    for (let r = i - range; r < i + range + 1; r++) {
+      numElements++;
+      avgDeltaSum += pot.deltaPerLevel[r];
+    }
+
+    let avgDelta = avgDeltaSum / (range * numElements);
+
+    if (avgDelta < maxWidth && avgDelta > minWidth) {
+      pot.deltaPerLevel[i] = avgDelta;
+    }
+  }
+}
+
+
+// Pull wall based on pullDirection
+export const pullWallPoints = (i, pot) => {
+  let { deltaPerLevel, pullDirection, pullSpeed, maxWidth, minWidth } = pot;
+  let amtToAdd = pullDirection * pullSpeed;
+  let newDelta = deltaPerLevel[i] + amtToAdd;
+  
+  if (newDelta < maxWidth && newDelta > minWidth) {
+    pot.deltaPerLevel[i] = newDelta;
+  }
+}
+
+
+// returns current mousePosition
+export const getMousePosition = (pot, event) => {
+  let { camera } = pot;
+
   let dragVec = new THREE.Vector3();
   let dragPos = new THREE.Vector3();
-  let {
-    numLevels,
-    deltaPerLevel,
-    maxWidth,
-    minWidth,
-    pullDirection,
-    pullSpeed
-  } = pot;
 
   dragVec.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, pot.position.z);
 
-
   dragVec.unproject(camera);
-
   dragVec.sub(camera.position).normalize();
-
   var distance = (pot.position.z - camera.position.z) / dragVec.z;
-
   dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance));
 
-  let pointsToModify = new Set();
-  pot.geometry.verticesNeedUpdate = true;
+  return dragPos;
+}
 
+export const alterWall = ({ pot, event }) => {
+  let { numLevels, deltaPerLevel, smooth, camera } = pot;
+  let pointsToModify = new Set();
+  const mousePos = getMousePosition(pot, event, camera);
+
+  pot.geometry.verticesNeedUpdate = true;
   for (let i = 0; i < pot.geometry.vertices.length; i++) {
-    if (dragPos.y <= pot.geometry.vertices[i].y + 1.5 && dragPos.y >= pot.geometry.vertices[i].y - 1.5) {
+    if (mousePos.y <= pot.geometry.vertices[i].y + 1.5 && mousePos.y >= pot.geometry.vertices[i].y - 1.5) {
       pointsToModify.add(i);
     }
   }
 
   let newPoints = [];
   const callback = point => newPoints.push(point);
+
   for (var i = 0; i < numLevels; i++) {
     if (pointsToModify.has(i)) {
-      let amtToAdd = pullDirection * pullSpeed;
-      let newDelta = deltaPerLevel[i] + amtToAdd;
+      if (!smooth) { pullWallPoints(i, pot); } 
+      else { smoothWallPoints(i, pot); }
 
-      if (newDelta < maxWidth && newDelta > minWidth) {
-        pot.deltaPerLevel[i] = newDelta;
-      }
-
-      createPotPoint({
-        pot,
-        level: i,
-        callback,
-        curve: deltaPerLevel[i]
-      });
+      createPotPoint({ pot, level: i, callback, curve: deltaPerLevel[i] });
     } else {
-      createPotPoint({
-        pot,
-        level: i,
-        callback,
-        curve: deltaPerLevel[i]
-      });
+      createPotPoint({ pot, level: i, callback, curve: deltaPerLevel[i] });
     }
   }
 
   pot.geometry = new THREE.LatheGeometry(newPoints, pot.numPointsPerLevel);
 }
 
-export const onDrag = ({
-  pot,
-  isMoving,
-  camera
-}) => {
+
+
+export const onDrag = ({ pot, isMoving }) => {
   return event => {
-    if (event.type === "mousedown") {
-      isMoving = true;
-    }
-
-    if (event.type === "mouseup") {
-      isMoving = false;
-    }
-
+    if (event.type === "mousedown") { isMoving = true; }
+    if (event.type === "mouseup") { isMoving = false; }
     if (event.type === "mousemove" && isMoving) {
-      makePull({
-        pot,
-        event,
-        camera
-      })
+      alterWall({ pot, event });
     }
   }
 }

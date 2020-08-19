@@ -1,0 +1,30 @@
+@import "./colors.scss";
+
+#height-slider {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 80%;
+  background: $DIV-BG;
+  z-index: 100;
+  padding: 8px;
+  color: white;
+  justify-content: space-evenly;
+  box-shadow: 0 1px 2px 2px $BOX-SHADOW;
+  border-radius: 8px;
+
+  div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+
+    input:hover {
+      cursor: pointer;
+    }
+  }
+}

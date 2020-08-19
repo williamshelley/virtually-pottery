@@ -1,7 +1,8 @@
 import {
   divNode,
   pNode,
-  imgNode
+  imgNode,
+  h3Node
 } from "./util/html_util";
 import {
   toggleRootPanel
@@ -29,7 +30,8 @@ const TENMOKU = "tenmoku";
 const RED = "copper-red";
 const BLUE = "cobalt-blue";
 const SHINO = "shino";
-const CELADON = "celadon-green"
+const CELADON = "celadon-green";
+const MUG_BORG = "mug-borg";
 
 export function createColorPalette(pot) {
   function _src(img) {
@@ -46,11 +48,13 @@ export function createColorPalette(pot) {
     id: "color-palette",
     className: "color-palette",
     children: [
+      h3Node({ innerText: "Choose a glaze" }),
       colorOptionNode("Tenmoku", _src(TENMOKU), _onClick(TENMOKU)),
       colorOptionNode("Copper Red", _src(RED), _onClick(RED)),
       colorOptionNode("Cobalt Blue", _src(BLUE), _onClick(BLUE)),
       colorOptionNode("Shino", _src(SHINO), _onClick(SHINO)),
       colorOptionNode("Celadon Green", _src(CELADON), _onClick(CELADON)),
+      colorOptionNode("Muggle Borg", _src(MUG_BORG), _onClick(MUG_BORG)),
     ]
   });
 }

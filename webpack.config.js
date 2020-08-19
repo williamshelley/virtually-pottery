@@ -1,4 +1,5 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   context: __dirname,
@@ -10,6 +11,7 @@ module.exports = {
   resolve: {
     extensions: ['.js']
   },
+  plugins: [new MiniCssExtractPlugin()],
   module: {
     rules: [
       {
@@ -20,6 +22,23 @@ module.exports = {
             presets: ['@babel/env']
           }
         },
+      },
+      {
+        test: /\.scss/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: "../assets/stylesheets",
+              // hmr: process.env.NODE_ENV === "development"
+            }
+          },
+          "css-loader",
+          "sass-loader",
+          "postcss-loader"
+        ]
       }
     ]
   },

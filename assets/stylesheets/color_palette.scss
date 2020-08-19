@@ -1,3 +1,5 @@
+@import "./colors.scss";
+
 .color-palette {
   display: flex;
   position: absolute;
@@ -6,20 +8,22 @@
   width: 100%;
   height: fit-content;
   min-width: 100px;
-  max-width: 200px;
+  max-width: 300px;
   overflow-y: scroll;
-  color: white;
+  color: $TEXT-COLOR;
   padding: 12px;
   box-sizing: border-box;
   align-items: center;
   justify-content: flex-start;
-  background-color: #6AB187;
+  background-color: $DIV-BG;
   gap: 8px;
   right: 0;
   top: 0;
   margin: 12px;
   border-radius: 8px;
   padding: 8px;
+  box-shadow: 0 1px 2px 2px $BOX-SHADOW;
+
 }
 
 .color-palette-option {
@@ -34,10 +38,9 @@
 }
 .color-palette-option:hover {
   cursor: pointer;
-  background-color: rgba(80,100,150,0.5);
+  background-color: $ITEM-HOVER;
 }
 .color-palette-option > p {
-  font-size: x-small;
   margin: 0;
 }
 

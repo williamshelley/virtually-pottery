@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./assets/stylesheets/main.scss":
+/*!**************************************!*\
+  !*** ./assets/stylesheets/main.scss ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "./entry.js":
 /*!******************!*\
   !*** ./entry.js ***!
@@ -95,32 +106,44 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _src_pot_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/pot.js */ "./src/pot.js");
-/* harmony import */ var _src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/options_sidebar.js */ "./src/options_sidebar.js");
-/* harmony import */ var _src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js");
+/* harmony import */ var _src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js");
+/* harmony import */ var _src_pot_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/pot.js */ "./src/pot.js");
+/* harmony import */ var _src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/options_sidebar.js */ "./src/options_sidebar.js");
+/* harmony import */ var _src_color_palette__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./src/color_palette */ "./src/color_palette.js");
+/* harmony import */ var _src_height_slider_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./src/height_slider.js */ "./src/height_slider.js");
+/* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./assets/stylesheets/main.scss */ "./assets/stylesheets/main.scss");
+/* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
 
 
 
 document.addEventListener("DOMContentLoaded", function () {
   var root = document.getElementById("root");
-  var scene = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createScene"])();
-  var camera = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createCamera"])();
-  var renderer = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createRenderer"])();
+  var scene = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createScene"])();
+  var camera = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createCamera"])();
+  var renderer = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createRenderer"])(); // add instructions
+
   root.appendChild(renderer.domElement);
-  var pot = Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_0__["createPot"])({
+  var pot = Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_1__["createPot"])({
     radius: 5,
     numLevels: 20,
     camera: camera
   });
   scene.add(pot);
-  var sidebar = Object(_src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_1__["createSidebar"])(pot);
+  var sidebar = Object(_src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_2__["createSidebar"])(pot);
+  var colorPalette = Object(_src_color_palette__WEBPACK_IMPORTED_MODULE_3__["createColorPalette"])(pot);
+  var heightSlider = Object(_src_height_slider_js__WEBPACK_IMPORTED_MODULE_4__["createHeightSlider"])(pot);
   root.appendChild(sidebar);
+  root.appendChild(colorPalette);
+  root.appendChild(heightSlider);
 
   var _animateScene = function _animateScene() {
-    Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_0__["animatePot"])(pot, 0.03);
+    Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_1__["animatePot"])(pot, 0.03);
   };
 
-  Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["animate"])(renderer, scene, camera, _animateScene);
+  Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["animate"])(renderer, scene, camera, _animateScene);
 });
 
 /***/ }),
@@ -51414,6 +51437,7 @@ var RED = "copper-red";
 var BLUE = "cobalt-blue";
 var SHINO = "shino";
 var CELADON = "celadon-green";
+var MUG_BORG = "mug-borg";
 function createColorPalette(pot) {
   function _src(img) {
     return "assets/images/".concat(img, ".png");
@@ -51428,7 +51452,9 @@ function createColorPalette(pot) {
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     id: "color-palette",
     className: "color-palette",
-    children: [colorOptionNode("Tenmoku", _src(TENMOKU), _onClick(TENMOKU)), colorOptionNode("Copper Red", _src(RED), _onClick(RED)), colorOptionNode("Cobalt Blue", _src(BLUE), _onClick(BLUE)), colorOptionNode("Shino", _src(SHINO), _onClick(SHINO)), colorOptionNode("Celadon Green", _src(CELADON), _onClick(CELADON))]
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["h3Node"])({
+      innerText: "Choose a glaze"
+    }), colorOptionNode("Tenmoku", _src(TENMOKU), _onClick(TENMOKU)), colorOptionNode("Copper Red", _src(RED), _onClick(RED)), colorOptionNode("Cobalt Blue", _src(BLUE), _onClick(BLUE)), colorOptionNode("Shino", _src(SHINO), _onClick(SHINO)), colorOptionNode("Celadon Green", _src(CELADON), _onClick(CELADON)), colorOptionNode("Muggle Borg", _src(MUG_BORG), _onClick(MUG_BORG))]
   });
 }
 function toggleColorPalette(pot) {
@@ -51465,16 +51491,20 @@ function createHeightSlider(pot) {
 
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
     id: "height-slider",
-    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
-      id: "height-slider-input",
-      type: "range",
-      min: 5,
-      max: 40,
-      value: pot.numLevels,
-      onInput: _onInput
-    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
-      id: "height-slider-value",
-      innerText: pot.numLevels
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["h3Node"])({
+      innerText: "Change height using slider"
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
+      children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
+        id: "height-slider-input",
+        type: "range",
+        min: 5,
+        max: 40,
+        value: pot.numLevels,
+        onInput: _onInput
+      }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
+        id: "height-slider-value",
+        innerText: pot.numLevels
+      })]
     })]
   });
 }
@@ -51501,12 +51531,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
 /* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
 /* harmony import */ var _pull_toggle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pull_toggle */ "./src/pull_toggle.js");
+/* harmony import */ var _smooth_toggle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth_toggle */ "./src/smooth_toggle.js");
 
 
 
 
 
-function sidebarNode(name, onClick, children) {
+
+function SidebarNode(name, onClick, children) {
   var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "sidebar-item",
     innerText: name,
@@ -51521,12 +51553,9 @@ function sidebarNode(name, onClick, children) {
 }
 
 function createSidebar(pot) {
-  var PullToggle = Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["createPullToggle"])(pot);
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "sidebar",
-    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot)), // sidebarNode("Collar or Flare", undefined, [PullToggle], "pull-toggle-container"),
-    // createPullToggle(pot)
-    Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["sidebarPullToggleNode"])(pot)]
+    children: [Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["default"])(pot), Object(_smooth_toggle__WEBPACK_IMPORTED_MODULE_4__["default"])(pot)]
   });
 }
 
@@ -51536,17 +51565,20 @@ function createSidebar(pot) {
 /*!********************!*\
   !*** ./src/pot.js ***!
   \********************/
-/*! exports provided: createPot, animatePot, makePull, onDrag */
+/*! exports provided: createPot, animatePot, smoothWallPoints, pullWallPoints, getMousePosition, alterWall, onDrag */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPot", function() { return createPot; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "animatePot", function() { return animatePot; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makePull", function() { return makePull; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "smoothWallPoints", function() { return smoothWallPoints; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pullWallPoints", function() { return pullWallPoints; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMousePosition", function() { return getMousePosition; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alterWall", function() { return alterWall; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onDrag", function() { return onDrag; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-
+ // creates a vector2 point and passes it to callback
 
 var createPotPoint = function createPotPoint(_ref) {
   var pot = _ref.pot,
@@ -51568,7 +51600,8 @@ var createPotPoint = function createPotPoint(_ref) {
   var y = level - radius - numLevels / yOffsetDivisor;
   var point = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](x, y);
   callback(point);
-};
+}; // initialization returns a mesh object with LatheGeometry and texture
+
 
 function createPot(_ref2) {
   var radius = _ref2.radius,
@@ -51631,13 +51664,13 @@ function createPot(_ref2) {
   pot.minWidth = minWidth;
   pot.position.z = zPosition - numLevels;
   pot.pullDirection = -1;
+  pot.smooth = false;
   var isMoving = false;
   var keyDown = false;
   var mouseDrag = onDrag({
     pot: pot,
     keyDown: keyDown,
-    isMoving: isMoving,
-    camera: camera
+    isMoving: isMoving
   });
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
@@ -51647,29 +51680,73 @@ function createPot(_ref2) {
 var animatePot = function animatePot(pot) {
   var rotationSpeed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.03;
   pot.rotation.y += rotationSpeed;
-};
-var makePull = function makePull(_ref3) {
-  var pot = _ref3.pot,
-      event = _ref3.event,
-      camera = _ref3.camera;
+}; // Wall smoothing based on average of point below and point above mouse pointer
+
+var smoothWallPoints = function smoothWallPoints(i, pot) {
+  var deltaPerLevel = pot.deltaPerLevel,
+      numLevels = pot.numLevels,
+      pullSpeed = pot.pullSpeed,
+      maxWidth = pot.maxWidth,
+      minWidth = pot.minWidth;
+  var range = 1;
+
+  if (i >= range && i < numLevels - range) {
+    var amtToAdd = pullSpeed;
+    var newDelta = deltaPerLevel[i] + amtToAdd;
+    var avgDeltaSum = newDelta;
+    var numElements = 1;
+
+    for (var r = i - range; r < i + range + 1; r++) {
+      numElements++;
+      avgDeltaSum += pot.deltaPerLevel[r];
+    }
+
+    var avgDelta = avgDeltaSum / (range * numElements);
+
+    if (avgDelta < maxWidth && avgDelta > minWidth) {
+      pot.deltaPerLevel[i] = avgDelta;
+    }
+  }
+}; // Pull wall based on pullDirection
+
+var pullWallPoints = function pullWallPoints(i, pot) {
+  var deltaPerLevel = pot.deltaPerLevel,
+      pullDirection = pot.pullDirection,
+      pullSpeed = pot.pullSpeed,
+      maxWidth = pot.maxWidth,
+      minWidth = pot.minWidth;
+  var amtToAdd = pullDirection * pullSpeed;
+  var newDelta = deltaPerLevel[i] + amtToAdd;
+
+  if (newDelta < maxWidth && newDelta > minWidth) {
+    pot.deltaPerLevel[i] = newDelta;
+  }
+}; // returns current mousePosition
+
+var getMousePosition = function getMousePosition(pot, event) {
+  var camera = pot.camera;
   var dragVec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
   var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-  var numLevels = pot.numLevels,
-      deltaPerLevel = pot.deltaPerLevel,
-      maxWidth = pot.maxWidth,
-      minWidth = pot.minWidth,
-      pullDirection = pot.pullDirection,
-      pullSpeed = pot.pullSpeed;
   dragVec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, pot.position.z);
   dragVec.unproject(camera);
   dragVec.sub(camera.position).normalize();
   var distance = (pot.position.z - camera.position.z) / dragVec.z;
   dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance));
+  return dragPos;
+};
+var alterWall = function alterWall(_ref3) {
+  var pot = _ref3.pot,
+      event = _ref3.event;
+  var numLevels = pot.numLevels,
+      deltaPerLevel = pot.deltaPerLevel,
+      smooth = pot.smooth,
+      camera = pot.camera;
   var pointsToModify = new Set();
+  var mousePos = getMousePosition(pot, event, camera);
   pot.geometry.verticesNeedUpdate = true;
 
   for (var _i = 0; _i < pot.geometry.vertices.length; _i++) {
-    if (dragPos.y <= pot.geometry.vertices[_i].y + 1.5 && dragPos.y >= pot.geometry.vertices[_i].y - 1.5) {
+    if (mousePos.y <= pot.geometry.vertices[_i].y + 1.5 && mousePos.y >= pot.geometry.vertices[_i].y - 1.5) {
       pointsToModify.add(_i);
     }
   }
@@ -51682,11 +51759,10 @@ var makePull = function makePull(_ref3) {
 
   for (var i = 0; i < numLevels; i++) {
     if (pointsToModify.has(i)) {
-      var amtToAdd = pullDirection * pullSpeed;
-      var newDelta = deltaPerLevel[i] + amtToAdd;
-
-      if (newDelta < maxWidth && newDelta > minWidth) {
-        pot.deltaPerLevel[i] = newDelta;
+      if (!smooth) {
+        pullWallPoints(i, pot);
+      } else {
+        smoothWallPoints(i, pot);
       }
 
       createPotPoint({
@@ -51709,8 +51785,7 @@ var makePull = function makePull(_ref3) {
 };
 var onDrag = function onDrag(_ref4) {
   var pot = _ref4.pot,
-      isMoving = _ref4.isMoving,
-      camera = _ref4.camera;
+      isMoving = _ref4.isMoving;
   return function (event) {
     if (event.type === "mousedown") {
       isMoving = true;
@@ -51721,10 +51796,9 @@ var onDrag = function onDrag(_ref4) {
     }
 
     if (event.type === "mousemove" && isMoving) {
-      makePull({
+      alterWall({
         pot: pot,
-        event: event,
-        camera: camera
+        event: event
       });
     }
   };
@@ -51748,54 +51822,54 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (
 /*!****************************!*\
   !*** ./src/pull_toggle.js ***!
   \****************************/
-/*! exports provided: sidebarPullToggleNode, createPullToggle, togglePullToggle */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sidebarPullToggleNode", function() { return sidebarPullToggleNode; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPullToggle", function() { return createPullToggle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "togglePullToggle", function() { return togglePullToggle; });
-/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PullToggleNode; });
+/* harmony import */ var _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/toggle_util */ "./src/util/toggle_util.js");
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 
-function sidebarPullToggleNode(pot) {
-  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
-    className: "pull-toggle-container",
-    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
+
+function PullToggleNode(pot) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
+    className: "toggle-container",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
       innerText: "Collar"
-    }), createPullToggle(pot), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
+    }), Object(_util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["createToggle"])(pot, _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["PULL_TOGGLE"]), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
       innerText: "Flare"
     })]
   });
   return node;
 }
-function createPullToggle(pot) {
-  var toggle = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
-    id: "pull-toggle",
-    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["inputNode"])({
-      id: "pull-toggle-input",
-      type: "checkbox"
+
+/***/ }),
+
+/***/ "./src/smooth_toggle.js":
+/*!******************************!*\
+  !*** ./src/smooth_toggle.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SmoothToggleNode; });
+/* harmony import */ var _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/toggle_util */ "./src/util/toggle_util.js");
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+
+
+function SmoothToggleNode(pot) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
+    className: "toggle-container",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
+      innerText: "Normal"
+    }), Object(_util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["createToggle"])(pot, _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["SMOOTH_TOGGLE"]), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
+      innerText: "Smooth"
     })]
   });
-  toggle.addEventListener("click", togglePullToggle(pot));
-  return toggle;
-}
-function togglePullToggle(pot) {
-  return function (event) {
-    var toggle = document.getElementById("pull-toggle");
-
-    if (toggle.classList.contains("toggled")) {
-      toggle.classList.remove("toggled");
-    } else {
-      toggle.classList.add("toggled");
-    }
-
-    var toggleInput = document.getElementById("pull-toggle-input");
-    var isInputClick = event.target.checked !== undefined;
-    var checked = toggleInput.checked;
-    toggleInput.checked = isInputClick ? checked : !checked;
-    pot.pullDirection = toggleInput.checked ? 1 : -1;
-  };
+  return node;
 }
 
 /***/ }),
@@ -51998,10 +52072,11 @@ function createCamera() {
 }
 function createRenderer() {
   var renderer = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]({
-    canvas: document.querySelector("#main-canvas")
+    canvas: document.querySelector("#main-canvas"),
+    alpha: true
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(_colors__WEBPACK_IMPORTED_MODULE_1__["SANDSTONE"]);
+  renderer.setClearColor(0x000000, 0);
   return renderer;
 }
 function animate(renderer, scene, camera, action) {
@@ -52059,6 +52134,71 @@ var onClick = function onClick(action, _ref2) {
 
 three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onClick = onClick;
 three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onMove = onMove;
+
+/***/ }),
+
+/***/ "./src/util/toggle_util.js":
+/*!*********************************!*\
+  !*** ./src/util/toggle_util.js ***!
+  \*********************************/
+/*! exports provided: PULL_TOGGLE, SMOOTH_TOGGLE, createToggle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PULL_TOGGLE", function() { return PULL_TOGGLE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SMOOTH_TOGGLE", function() { return SMOOTH_TOGGLE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createToggle", function() { return createToggle; });
+/* harmony import */ var _html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./html_util */ "./src/util/html_util.js");
+
+var PULL_TOGGLE = "pull-toggle";
+var SMOOTH_TOGGLE = "smooth-toggle";
+
+var toggleAction = function toggleAction(pot, id) {
+  var toggleInput = document.getElementById(id + "-input");
+  var isInputClick = event.target.checked !== undefined;
+  var checked = toggleInput.checked;
+  toggleInput.checked = isInputClick ? checked : !checked;
+
+  switch (id) {
+    case PULL_TOGGLE:
+      pot.pullDirection = toggleInput.checked ? 1 : -1;
+      return;
+
+    case SMOOTH_TOGGLE:
+      pot.smooth = !pot.smooth;
+      return;
+
+    default:
+      return;
+  }
+};
+
+function onToggle(pot, id) {
+  return function (event) {
+    var toggle = document.getElementById(id);
+
+    if (toggle.classList.contains("toggled")) {
+      toggle.classList.remove("toggled");
+    } else {
+      toggle.classList.add("toggled");
+    }
+
+    toggleAction(pot, id);
+  };
+}
+
+function createToggle(pot, id) {
+  var toggle = Object(_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    id: id,
+    children: [Object(_html_util__WEBPACK_IMPORTED_MODULE_0__["inputNode"])({
+      id: id + "-input",
+      type: "checkbox"
+    })]
+  });
+  toggle.addEventListener("click", onToggle(pot, id));
+  return toggle;
+}
 
 /***/ })
 

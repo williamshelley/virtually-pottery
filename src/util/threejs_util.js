@@ -17,9 +17,10 @@ export function createCamera() {
 export function createRenderer() {
   var renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector("#main-canvas"),
+    alpha: true,
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(COLORS.SANDSTONE);
+  renderer.setClearColor(0x000000, 0);
   return renderer;
 }
 

@@ -1,0 +1,59 @@
+@import "./colors.scss";
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px;
+  background-color: $SUB-DIV-BG;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.toggle-container > p {
+  margin: 0;
+  width: 30%;
+}
+
+.toggle-container > p:first-of-type {
+  text-align: left;
+}
+
+.toggle-container > p:last-of-type {
+  text-align: right;
+}
+
+#pull-toggle,
+#smooth-toggle {
+  display: flex;
+  background: $SUB-DIV-ITEM-BG;
+  padding: 4px;
+  border-radius: 32px;
+  width: 30%;
+  max-width: 100px;
+  outline: none;
+}
+
+.toggled {
+  justify-content: flex-end;
+}
+
+#pull-toggle:hover,
+#pull-toggle-input:hover,
+#smooth-toggle:hover,
+#smooth-toggle-input:hover {
+  cursor: pointer;
+}
+
+#smooth-toggle-input,
+#pull-toggle-input {
+  min-height: 40px;
+  min-width: 40px;
+  appearance: none;
+  background-color: $ITEM-HOVER;
+  border-radius: 50%;
+  margin: 0;
+  outline: none;
+}

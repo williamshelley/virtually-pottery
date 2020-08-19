@@ -1,9 +1,39 @@
-#pull-toggle {
+.pull-toggle-container {
   display: flex;
-  background: #6AB187;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   padding: 8px;
+  background-color: #20948B;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-#pull-toggle > input {
+#pull-toggle {
+  display: flex;
+  background: #DE7A22;
+  padding: 4px;
+  border-radius: 32px;
+  width: 75px;
+  outline: none;
+}
 
+.toggled {
+  justify-content: flex-end;
+}
+
+#pull-toggle:hover,
+#pull-toggle-input:hover {
+  cursor: pointer;
+}
+
+#pull-toggle-input {
+  min-height: 40px;
+  min-width: 40px;
+  appearance: none;
+  background-color: rgba(80,100,150,0.5);
+  border-radius: 50%;
+  margin: 0;
+  outline: none;
 }

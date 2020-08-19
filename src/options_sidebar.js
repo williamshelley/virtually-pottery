@@ -7,7 +7,7 @@ import {
 import {
   toggleHeightSlider
 } from "./height_slider";
-import { togglePullToggle, createPullToggle } from "./pull_toggle";
+import { togglePullToggle, createPullToggle, sidebarPullToggleNode } from "./pull_toggle";
 
 function sidebarNode(name, onClick, children) {
   let node = (divNode({
@@ -16,20 +16,23 @@ function sidebarNode(name, onClick, children) {
     children
   }));
 
-  node.addEventListener("click", onClick, false);
+  if (onClick) {
+    node.addEventListener("click", onClick, false);
+  }
 
   return node;
 }
 
 export function createSidebar(pot) {
   const PullToggle = createPullToggle(pot);
-
   return divNode({
     className: "sidebar",
     children: [
       sidebarNode("Choose Glaze", toggleColorPalette(pot)),
       sidebarNode("Change Pot Height", toggleHeightSlider(pot)),
-      sidebarNode("Collar or Flare", togglePullToggle(pot), [PullToggle])
+      // sidebarNode("Collar or Flare", undefined, [PullToggle], "pull-toggle-container"),
+      // createPullToggle(pot)
+      sidebarPullToggleNode(pot)
     ]
   });
 }

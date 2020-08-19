@@ -51512,7 +51512,11 @@ function sidebarNode(name, onClick, children) {
     innerText: name,
     children: children
   });
-  node.addEventListener("click", onClick, false);
+
+  if (onClick) {
+    node.addEventListener("click", onClick, false);
+  }
+
   return node;
 }
 
@@ -51520,7 +51524,9 @@ function createSidebar(pot) {
   var PullToggle = Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["createPullToggle"])(pot);
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "sidebar",
-    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot)), sidebarNode("Collar or Flare", Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["togglePullToggle"])(pot), [PullToggle])]
+    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot)), // sidebarNode("Collar or Flare", undefined, [PullToggle], "pull-toggle-container"),
+    // createPullToggle(pot)
+    Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["sidebarPullToggleNode"])(pot)]
   });
 }
 
@@ -51573,13 +51579,15 @@ function createPot(_ref2) {
       _ref2$pullSpeed = _ref2.pullSpeed,
       pullSpeed = _ref2$pullSpeed === void 0 ? 0.01 : _ref2$pullSpeed,
       _ref2$maxWidth = _ref2.maxWidth,
-      maxWidth = _ref2$maxWidth === void 0 ? 10 : _ref2$maxWidth,
+      maxWidth = _ref2$maxWidth === void 0 ? 3 : _ref2$maxWidth,
       _ref2$minWidth = _ref2.minWidth,
       minWidth = _ref2$minWidth === void 0 ? 0 : _ref2$minWidth,
       _ref2$maxLevels = _ref2.maxLevels,
       maxLevels = _ref2$maxLevels === void 0 ? 40 : _ref2$maxLevels,
       _ref2$minLevels = _ref2.minLevels,
-      minLevels = _ref2$minLevels === void 0 ? 5 : _ref2$minLevels;
+      minLevels = _ref2$minLevels === void 0 ? 5 : _ref2$minLevels,
+      _ref2$numPointsPerLev = _ref2.numPointsPerLevel,
+      numPointsPerLevel = _ref2$numPointsPerLev === void 0 ? 20 : _ref2$numPointsPerLev;
   var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
   var points = [];
 
@@ -51606,11 +51614,12 @@ function createPot(_ref2) {
     points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]());
   }
 
-  var potGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
+  var potGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points, numPointsPerLevel);
   var potMat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
     map: loader.load("../assets/images/earthenware.jpg")
   });
   var pot = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](potGeo, potMat);
+  pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
   pot.radius = radius;
   pot.numLevels = numLevels;
@@ -51620,8 +51629,8 @@ function createPot(_ref2) {
   pot.pullSpeed = pullSpeed;
   pot.maxWidth = maxWidth;
   pot.minWidth = minWidth;
-  pot.position.z = zPosition;
-  pot.pullDirection = 1;
+  pot.position.z = zPosition - numLevels;
+  pot.pullDirection = -1;
   var isMoving = false;
   var keyDown = false;
   var mouseDrag = onDrag({
@@ -51630,7 +51639,6 @@ function createPot(_ref2) {
     isMoving: isMoving,
     camera: camera
   });
-  window.addEventListener("keypress", mouseDrag, false);
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
   window.addEventListener("mousemove", mouseDrag, false);
@@ -51697,17 +51705,13 @@ var makePull = function makePull(_ref3) {
     }
   }
 
-  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints);
+  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints, pot.numPointsPerLevel);
 };
 var onDrag = function onDrag(_ref4) {
   var pot = _ref4.pot,
       isMoving = _ref4.isMoving,
       camera = _ref4.camera;
   return function (event) {
-    if (event.type === "keypress") {
-      pot.pullDirection = -pot.pullDirection;
-    }
-
     if (event.type === "mousedown") {
       isMoving = true;
     }
@@ -51744,26 +51748,54 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (
 /*!****************************!*\
   !*** ./src/pull_toggle.js ***!
   \****************************/
-/*! exports provided: createPullToggle, togglePullToggle */
+/*! exports provided: sidebarPullToggleNode, createPullToggle, togglePullToggle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sidebarPullToggleNode", function() { return sidebarPullToggleNode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPullToggle", function() { return createPullToggle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "togglePullToggle", function() { return togglePullToggle; });
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 
+function sidebarPullToggleNode(pot) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "pull-toggle-container",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
+      innerText: "Collar"
+    }), createPullToggle(pot), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
+      innerText: "Flare"
+    })]
+  });
+  return node;
+}
 function createPullToggle(pot) {
-  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+  var toggle = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     id: "pull-toggle",
     children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["inputNode"])({
       id: "pull-toggle-input",
       type: "checkbox"
     })]
   });
+  toggle.addEventListener("click", togglePullToggle(pot));
+  return toggle;
 }
 function togglePullToggle(pot) {
-  pot.pullDirection = -pot.pullDirection;
+  return function (event) {
+    var toggle = document.getElementById("pull-toggle");
+
+    if (toggle.classList.contains("toggled")) {
+      toggle.classList.remove("toggled");
+    } else {
+      toggle.classList.add("toggled");
+    }
+
+    var toggleInput = document.getElementById("pull-toggle-input");
+    var isInputClick = event.target.checked !== undefined;
+    var checked = toggleInput.checked;
+    toggleInput.checked = isInputClick ? checked : !checked;
+    pot.pullDirection = toggleInput.checked ? 1 : -1;
+  };
 }
 
 /***/ }),

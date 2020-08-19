@@ -26,10 +26,11 @@ export function createPot({
   camera,
   zPosition = -40,
   pullSpeed = 0.01,
-  maxWidth = 10,
+  maxWidth = 3,
   minWidth = 0,
   maxLevels = 40,
   minLevels = 5,
+  numPointsPerLevel = 20,
 }) {
   const loader = new THREE.TextureLoader();
   let points = [];
@@ -57,12 +58,13 @@ export function createPot({
     points.push(new THREE.Vector2());
   }
 
-  let potGeo = new THREE.LatheGeometry(points);
+  let potGeo = new THREE.LatheGeometry(points, numPointsPerLevel);
   let potMat = new THREE.MeshBasicMaterial({
     map: loader.load("../assets/images/earthenware.jpg")
   });
   let pot = new THREE.Mesh(potGeo, potMat);
 
+  pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
   pot.radius = radius;
   pot.numLevels = numLevels;
@@ -70,8 +72,8 @@ export function createPot({
   pot.pullSpeed = pullSpeed;
   pot.maxWidth = maxWidth;
   pot.minWidth = minWidth;
-  pot.position.z = zPosition;
-  pot.pullDirection = 1;
+  pot.position.z = zPosition - numLevels;
+  pot.pullDirection = -1;
 
   let isMoving = false;
   let keyDown = false;
@@ -81,7 +83,6 @@ export function createPot({
     isMoving,
     camera
   });
-  window.addEventListener("keypress", mouseDrag, false);
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
   window.addEventListener("mousemove", mouseDrag, false);
@@ -156,7 +157,7 @@ export const makePull = ({
     }
   }
 
-  pot.geometry = new THREE.LatheGeometry(newPoints);
+  pot.geometry = new THREE.LatheGeometry(newPoints, pot.numPointsPerLevel);
 }
 
 export const onDrag = ({
@@ -165,11 +166,6 @@ export const onDrag = ({
   camera
 }) => {
   return event => {
-
-    if (event.type === "keypress") {
-      pot.pullDirection = -pot.pullDirection;
-    }
-
     if (event.type === "mousedown") {
       isMoving = true;
     }

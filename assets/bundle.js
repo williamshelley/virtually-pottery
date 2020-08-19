@@ -95,168 +95,32 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-var _require = __webpack_require__(/*! ./src/html_util.js */ "./src/html_util.js"),
-    html = _require.html,
-    div = _require.div,
-    span = _require.span,
-    p = _require.p,
-    h1 = _require.h1,
-    h2 = _require.h2,
-    h3 = _require.h3,
-    createNode = _require.createNode,
-    divNode = _require.divNode,
-    spanNode = _require.spanNode,
-    pNode = _require.pNode,
-    h1Node = _require.h1Node,
-    h2Node = _require.h2Node,
-    h3Node = _require.h3Node;
-
-var _require2 = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js"),
-    createScene = _require2.createScene,
-    createCamera = _require2.createCamera,
-    createRenderer = _require2.createRenderer,
-    animate = _require2.animate; // var THREE = require('three'); // require peer dependency
-// var initializeDomEvents = require('threex.domevents');
+/* harmony import */ var _src_main_canvas_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/main_canvas.js */ "./src/main_canvas.js");
+/* harmony import */ var _src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/options_sidebar.js */ "./src/options_sidebar.js");
+/* harmony import */ var _src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js");
 
 
- // const initializeDomEvents = require("threex.domevents");
-// import * as THREEx from "threex.domevents";
-// const scene = new THREE.Scene();
-// import "./assets/stylesheets/default.scss";
 
 document.addEventListener("DOMContentLoaded", function () {
   var root = document.getElementById("root");
-  var scene = createScene();
-  var camera = createCamera();
-  var renderer = createRenderer();
-  var raycaster = new three__WEBPACK_IMPORTED_MODULE_0__["Raycaster"]();
-  var eventListenerInfo = {
-    raycaster: raycaster,
-    scene: scene,
-    camera: camera
-  };
-  var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+  var scene = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createScene"])();
+  var camera = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createCamera"])();
+  var renderer = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createRenderer"])();
   root.appendChild(renderer.domElement);
-  var sphere = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](1, 3, 3), new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-    color: 0xffffff
-  }));
-  scene.add(sphere);
-  var points = [];
-
-  for (var i = 0; i < 20; i++) {
-    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(0.2) * 10 + 5, i - 5));
-  }
-
-  var latheGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
-  var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-    map: loader.load("./assets/images/earthenware.jpg")
+  var pot = Object(_src_main_canvas_js__WEBPACK_IMPORTED_MODULE_0__["createPot"])({
+    radius: 5,
+    numLevels: 20,
+    camera: camera
   });
-  var lathe = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](latheGeo, material);
-  scene.add(lathe);
-  lathe.onClick(function (obj, mouse) {// console.log(lathe.geometry.vertices);
-    // console.log(mouse);
-  }, eventListenerInfo);
-  lathe.position.y = -5;
-  var radius = 0.1;
-  var moving = false;
-  var specialKeyDown = false;
-  var dragVec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-  var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](); // console.log(lathe.geometry.vertices);
+  scene.add(pot);
+  var sidebar = Object(_src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_1__["createSidebar"])(pot);
+  root.appendChild(sidebar);
 
-  var arrAmt = points.map(function (point) {
-    return 1.0;
-  });
-  var modifier = 0.02; //pedal
+  var _animateScene = function _animateScene() {
+    Object(_src_main_canvas_js__WEBPACK_IMPORTED_MODULE_0__["animatePot"])(pot, 0.03);
+  };
 
-  function onDrag() {
-    var pullSpeed = modifier;
-    var pullDirection = specialKeyDown === true ? -1 : 1;
-    dragVec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, sphere.position.z);
-    dragVec.unproject(camera);
-    dragVec.sub(camera.position).normalize();
-    var distance = (sphere.position.z - camera.position.z) / dragVec.z;
-    dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance)); // console.log(lathe.geometry.vertices);
-
-    lathe.geometry.verticesNeedUpdate = true; // console.log(dragPos);
-
-    for (var _i = 0; _i < lathe.geometry.vertices.length; _i++) {
-      if (dragPos.y <= lathe.geometry.vertices[_i].y + 0.5 && dragPos.y >= lathe.geometry.vertices[_i].y - 0.5) {
-        var newPoints = [];
-
-        for (var j = 0; j < 30; j++) {
-          if (j !== _i && j !== _i - 1 && j !== _i + 1) {
-            newPoints.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(arrAmt[j] * 0.2) * 10 + 5, j - 5));
-          } else {
-            // arrAmt[i] += arrAmt[i] += pullDirection * pullSpeed;
-            if (arrAmt[_i] <= 10 && arrAmt[_i] >= 0 || arrAmt[_i] > 10 && pullDirection < 0 || arrAmt[_i] >= 0 && arrAmt[_i] <= 10 || arrAmt[_i] < 0 && pullDirection > 0) {
-              arrAmt[_i] += pullDirection * pullSpeed;
-            }
-
-            newPoints.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](Math.sin(arrAmt[j] * 0.2) * 10 + 5, j - 5));
-          }
-        }
-
-        lathe.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints); // }
-        // lathe.geometry.vertices[i].position = new THREE.Vector2(Math.sin(0.2 * 10 + 5, (i - 5) * 2));
-        // lathe.geometry.vertices[ i ].y = dragPos.z;
-      } // console.log(lathe);
-
-    }
-  }
-
-  function mouseDrag(event) {
-    // console.log("hallo");
-    if (event.type === "keypress") {
-      specialKeyDown = !specialKeyDown;
-    } // if (event.type === "keyup") {
-    //   specialKeyDown = false;
-    // }
-
-
-    if (event.type === "mousedown") {
-      moving = true;
-      onDrag();
-    }
-
-    if (event.type === "mouseup") {
-      moving = false;
-    }
-
-    if (event.type === "mousemove" && moving) {
-      // console.log("dragging");
-      onDrag();
-    }
-  } // window.addEventListener("keydown", mouseDrag, false);
-
-
-  window.addEventListener("keypress", mouseDrag, false); // window.addEventListener("keyup", mouseDrag, false);
-
-  window.addEventListener("mousedown", mouseDrag, false);
-  window.addEventListener("mouseup", mouseDrag, false);
-  window.addEventListener("mousemove", mouseDrag, false);
-  var mouse = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]();
-  var pos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-  sphere.position.z = -39;
-  var vec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-  window.addEventListener("mousemove", function (event) {
-    vec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, sphere.position.z);
-    vec.unproject(camera);
-    vec.sub(camera.position).normalize();
-    var distance = (sphere.position.z - camera.position.z) / vec.z;
-    pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    sphere.position.x = pos.x;
-    sphere.position.y = pos.y;
-    sphere.position.z = pos.z;
-  });
-  lathe.position.z = -40;
-
-  function animateObjects() {
-    lathe.rotation.y += 0.03;
-  }
-
-  window.scene = scene;
-  animate(renderer, scene, camera, animateObjects);
+  Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["animate"])(renderer, scene, camera, _animateScene);
 });
 
 /***/ }),
@@ -51516,154 +51380,494 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
 /***/ }),
 
-/***/ "./src/html_util.js":
-/*!**************************!*\
-  !*** ./src/html_util.js ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ "./src/color_palette.js":
+/*!******************************!*\
+  !*** ./src/color_palette.js ***!
+  \******************************/
+/*! exports provided: createColorPalette, toggleColorPalette */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorPalette", function() { return createColorPalette; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleColorPalette", function() { return toggleColorPalette; });
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony import */ var _util_panel_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/panel_util */ "./src/util/panel_util.js");
+
+
+
+function colorOptionNode(name, src, onClick) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "color-palette-option",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
+      className: "color-palette-option-name",
+      innerText: name
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["imgNode"])({
+      className: "color-palette-option-img",
+      src: src
+    })]
+  });
+  node.addEventListener("click", onClick, false);
+  return node;
+}
+
+var TENMOKU = "tenmoku";
+var RED = "copper-red";
+var BLUE = "cobalt-blue";
+var SHINO = "shino";
+var CELADON = "celadon-green";
+function createColorPalette(pot) {
+  function _src(img) {
+    return "assets/images/".concat(img, ".png");
+  }
+
+  function _onClick(newMaterial) {
+    return function (e) {
+      pot.changeMaterial(_src(newMaterial));
+    };
+  }
+
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    id: "color-palette",
+    className: "color-palette",
+    children: [colorOptionNode("Tenmoku", _src(TENMOKU), _onClick(TENMOKU)), colorOptionNode("Copper Red", _src(RED), _onClick(RED)), colorOptionNode("Cobalt Blue", _src(BLUE), _onClick(BLUE)), colorOptionNode("Shino", _src(SHINO), _onClick(SHINO)), colorOptionNode("Celadon Green", _src(CELADON), _onClick(CELADON))]
+  });
+}
+function toggleColorPalette(pot) {
+  return function (event) {
+    var element = document.getElementById("color-palette");
+    Object(_util_panel_util__WEBPACK_IMPORTED_MODULE_1__["toggleRootPanel"])(element, createColorPalette(pot));
+  };
+}
+
+/***/ }),
+
+/***/ "./src/height_slider.js":
+/*!******************************!*\
+  !*** ./src/height_slider.js ***!
+  \******************************/
+/*! exports provided: createHeightSlider, toggleHeightSlider */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHeightSlider", function() { return createHeightSlider; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleHeightSlider", function() { return toggleHeightSlider; });
+/* harmony import */ var _util_panel_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/panel_util */ "./src/util/panel_util.js");
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+
+
+function createHeightSlider(pot) {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
+    id: "height-slider",
+    className: "height-slider",
+    type: "range",
+    min: 5,
+    max: 40,
+    value: 20
+  });
+}
+function toggleHeightSlider(pot) {
+  return function (event) {
+    var element = document.getElementById("height-slider");
+    Object(_util_panel_util__WEBPACK_IMPORTED_MODULE_0__["toggleRootPanel"])(element, createHeightSlider());
+  };
+}
+
+/***/ }),
+
+/***/ "./src/main_canvas.js":
+/*!****************************!*\
+  !*** ./src/main_canvas.js ***!
+  \****************************/
+/*! exports provided: createPot, animatePot, makePull, onDrag */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPot", function() { return createPot; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "animatePot", function() { return animatePot; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makePull", function() { return makePull; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onDrag", function() { return onDrag; });
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+
+
+var createPotPoint = function createPotPoint(_ref) {
+  var pot = _ref.pot,
+      numLevels = _ref.numLevels,
+      radius = _ref.radius,
+      level = _ref.level,
+      callback = _ref.callback,
+      _ref$curve = _ref.curve,
+      curve = _ref$curve === void 0 ? 1 : _ref$curve;
+
+  if (pot) {
+    radius = pot.radius;
+    numLevels = pot.numLevels;
+  }
+
+  var x = Math.sin(curve * 0.2) * numLevels + radius;
+  var point = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](x, level - radius - numLevels / 2);
+  callback(point);
+};
+
+function createPot(_ref2) {
+  var radius = _ref2.radius,
+      numLevels = _ref2.numLevels,
+      camera = _ref2.camera,
+      _ref2$zPosition = _ref2.zPosition,
+      zPosition = _ref2$zPosition === void 0 ? -40 : _ref2$zPosition,
+      _ref2$pullSpeed = _ref2.pullSpeed,
+      pullSpeed = _ref2$pullSpeed === void 0 ? 0.01 : _ref2$pullSpeed,
+      _ref2$maxWidth = _ref2.maxWidth,
+      maxWidth = _ref2$maxWidth === void 0 ? 10 : _ref2$maxWidth,
+      _ref2$minWidth = _ref2.minWidth,
+      minWidth = _ref2$minWidth === void 0 ? 0 : _ref2$minWidth;
+  var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+  var points = [];
+
+  function callback(point) {
+    points.push(point);
+  }
+
+  for (var i = 0; i < numLevels; i++) {
+    createPotPoint({
+      radius: radius,
+      level: i,
+      callback: callback,
+      numLevels: numLevels
+    });
+  }
+
+  var potGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
+  var potMat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
+    map: loader.load("../assets/images/earthenware.jpg")
+  });
+  var pot = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](potGeo, potMat);
+  pot.radius = radius;
+  pot.numLevels = numLevels;
+  pot.deltaPerLevel = points.map(function () {
+    return 1.0;
+  });
+  pot.pullSpeed = pullSpeed;
+  pot.maxWidth = maxWidth;
+  pot.minWidth = minWidth;
+  pot.position.z = zPosition;
+  var isMoving = false;
+  var keyDown = false;
+  var mouseDrag = onDrag({
+    pot: pot,
+    keyDown: keyDown,
+    isMoving: isMoving,
+    camera: camera
+  });
+  window.addEventListener("keypress", mouseDrag, false);
+  window.addEventListener("mousedown", mouseDrag, false);
+  window.addEventListener("mouseup", mouseDrag, false);
+  window.addEventListener("mousemove", mouseDrag, false);
+  return pot;
+}
+var animatePot = function animatePot(pot) {
+  var rotationSpeed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.03;
+  pot.rotation.y += rotationSpeed;
+};
+var makePull = function makePull(_ref3) {
+  var pot = _ref3.pot,
+      event = _ref3.event,
+      keyDown = _ref3.keyDown,
+      camera = _ref3.camera;
+  var dragVec = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+  var dragPos = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+  var numLevels = pot.numLevels,
+      deltaPerLevel = pot.deltaPerLevel,
+      maxWidth = pot.maxWidth,
+      minWidth = pot.minWidth;
+  var pullDirection = keyDown === true ? -1 : 1;
+  dragVec.set(event.clientX / window.innerWidth * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, pot.position.z);
+  dragVec.unproject(camera);
+  dragVec.sub(camera.position).normalize();
+  var distance = (pot.position.z - camera.position.z) / dragVec.z;
+  dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance));
+  var pointsToModify = new Set();
+  pot.geometry.verticesNeedUpdate = true;
+
+  for (var _i = 0; _i < pot.geometry.vertices.length; _i++) {
+    if (dragPos.y <= pot.geometry.vertices[_i].y + 1.5 && dragPos.y >= pot.geometry.vertices[_i].y - 1.5) {
+      pointsToModify.add(_i);
+    }
+  }
+
+  var newPoints = [];
+
+  var callback = function callback(point) {
+    return newPoints.push(point);
+  };
+
+  for (var i = 0; i < numLevels; i++) {
+    if (pointsToModify.has(i)) {
+      var amtToAdd = pullDirection * pot.pullSpeed;
+      var newDelta = deltaPerLevel[i] + amtToAdd;
+
+      if (newDelta < maxWidth && newDelta > minWidth) {
+        pot.deltaPerLevel[i] = newDelta;
+      }
+
+      createPotPoint({
+        pot: pot,
+        level: i,
+        callback: callback,
+        curve: deltaPerLevel[i]
+      });
+    } else {
+      createPotPoint({
+        pot: pot,
+        level: i,
+        callback: callback,
+        curve: deltaPerLevel[i]
+      });
+    }
+  }
+
+  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints);
+};
+var onDrag = function onDrag(_ref4) {
+  var pot = _ref4.pot,
+      keyDown = _ref4.keyDown,
+      isMoving = _ref4.isMoving,
+      camera = _ref4.camera;
+  return function (event) {
+    if (event.type === "keypress") {
+      keyDown = !keyDown;
+    }
+
+    if (event.type === "mousedown") {
+      isMoving = true;
+    }
+
+    if (event.type === "mouseup") {
+      isMoving = false;
+    }
+
+    if (event.type === "mousemove" && isMoving) {
+      makePull({
+        pot: pot,
+        keyDown: keyDown,
+        event: event,
+        camera: camera
+      });
+    }
+  };
+};
+
+Number.prototype.between = function (num, min, max) {
+  return num >= min && num <= max;
+};
+
+three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (newMaterialUrl) {
+  var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+  var newMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
+    map: loader.load(newMaterialUrl)
+  });
+  this.material = newMaterial;
+};
+
+/***/ }),
+
+/***/ "./src/options_sidebar.js":
+/*!********************************!*\
+  !*** ./src/options_sidebar.js ***!
+  \********************************/
+/*! exports provided: createSidebar */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSidebar", function() { return createSidebar; });
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
+/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
+
+
+
+
+function sidebarNode(name, onClick) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "sidebar-item",
+    innerText: name
+  });
+  node.addEventListener("click", onClick, false);
+  return node;
+}
+
+function createSidebar(pot) {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "sidebar",
+    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot))]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/util/colors.js":
+/*!****************************!*\
+  !*** ./src/util/colors.js ***!
+  \****************************/
+/*! exports provided: SANDSTONE, BURNT_ORANGE, SEA, LAGOON */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SANDSTONE", function() { return SANDSTONE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BURNT_ORANGE", function() { return BURNT_ORANGE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SEA", function() { return SEA; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LAGOON", function() { return LAGOON; });
+var SANDSTONE = "#F4CC70";
+var BURNT_ORANGE = "#DE7A22";
+var SEA = "#20948B";
+var LAGOON = "6AB187";
+
+/***/ }),
+
+/***/ "./src/util/html_util.js":
+/*!*******************************!*\
+  !*** ./src/util/html_util.js ***!
+  \*******************************/
+/*! exports provided: createNode, divNode, spanNode, pNode, imgNode, h1Node, h2Node, h3Node, inputNode */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createNode", function() { return createNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "divNode", function() { return divNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "spanNode", function() { return spanNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pNode", function() { return pNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "imgNode", function() { return imgNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h1Node", function() { return h1Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h2Node", function() { return h2Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h3Node", function() { return h3Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "inputNode", function() { return inputNode; });
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var attr = function attr(_ref) {
-  var key = _ref.key,
-      value = _ref.value;
-  return value ? "".concat(key, "=").concat(value) : "";
-};
-
-var classSelector = function classSelector(className) {
-  return className ? ".".concat(className) : "";
-};
-
-var createNode = function createNode(_ref2) {
-  var tag = _ref2.tag,
-      _ref2$id = _ref2.id,
-      id = _ref2$id === void 0 ? "" : _ref2$id,
-      _ref2$className = _ref2.className,
-      className = _ref2$className === void 0 ? "" : _ref2$className,
-      _ref2$children = _ref2.children,
-      children = _ref2$children === void 0 ? [] : _ref2$children,
-      _ref2$innerText = _ref2.innerText,
-      innerText = _ref2$innerText === void 0 ? "" : _ref2$innerText;
-  id = attr("id", id);
-  className = attr("class", id);
+var createNode = function createNode(_ref) {
+  var tag = _ref.tag,
+      id = _ref.id,
+      className = _ref.className,
+      src = _ref.src,
+      innerText = _ref.innerText,
+      type = _ref.type,
+      value = _ref.value,
+      min = _ref.min,
+      max = _ref.max,
+      _ref$children = _ref.children,
+      children = _ref$children === void 0 ? [] : _ref$children;
   var childNode = document.createElement(tag);
-  childNode.id = id;
-  childNode.className = className;
-  childNode.innerText = innerText;
-  children.forEach(function (child) {
-    return childNode.appendChild(child);
-  });
+
+  if (id) {
+    childNode.id = id;
+  }
+
+  if (className) {
+    childNode.className = className;
+  }
+
+  if (src) {
+    childNode.src = src;
+  }
+
+  if (innerText && tag !== "input") {
+    childNode.innerText = innerText;
+  }
+
+  if (type) {
+    childNode.type = type;
+  }
+
+  if (value) {
+    childNode.value = value;
+  }
+
+  if (min) {
+    childNode.min = min;
+  }
+
+  if (max) {
+    childNode.max = max;
+  }
+
+  if (tag !== "input") {
+    children.forEach(function (child) {
+      return childNode.appendChild(child);
+    });
+  }
+
   return childNode;
 };
-
 var divNode = function divNode(props) {
   return createNode(_objectSpread({
     tag: "div"
   }, props));
 };
-
 var spanNode = function spanNode(props) {
   return createNode(_objectSpread({
     tag: "span"
   }, props));
 };
-
 var pNode = function pNode(props) {
   return createNode(_objectSpread({
     tag: "p"
   }, props));
 };
-
+var imgNode = function imgNode(props) {
+  return createNode(_objectSpread({
+    tag: "img"
+  }, props));
+};
 var h1Node = function h1Node(props) {
   return createNode(_objectSpread({
     tag: "h1"
   }, props));
 };
-
 var h2Node = function h2Node(props) {
   return createNode(_objectSpread({
     tag: "h2"
   }, props));
 };
-
 var h3Node = function h3Node(props) {
   return createNode(_objectSpread({
     tag: "h3"
   }, props));
 };
-
-var html = function html(_ref3) {
-  var tag = _ref3.tag,
-      id = _ref3.id,
-      className = _ref3.className,
-      children = _ref3.children,
-      onClick = _ref3.onClick;
-  id = attr("id", id);
-  className = attr({
-    key: "class",
-    value: className
-  });
-  console.log(className);
-  return "<".concat(tag, " ").concat(id, " ").concat(className, ">").concat(children.join(""), "</").concat(tag, ">");
-};
-
-var div = function div(props) {
-  return html(_objectSpread({
-    tag: "div"
+var inputNode = function inputNode(props) {
+  return createNode(_objectSpread({
+    tag: "input"
   }, props));
 };
 
-var span = function span(props) {
-  return html(_objectSpread({
-    tag: "span"
-  }, props));
-};
+/***/ }),
 
-var p = function p(props) {
-  return html(_objectSpread({
-    tag: "p"
-  }, props));
-};
+/***/ "./src/util/panel_util.js":
+/*!********************************!*\
+  !*** ./src/util/panel_util.js ***!
+  \********************************/
+/*! exports provided: toggleRootPanel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var h1 = function h1(props) {
-  return html(_objectSpread({
-    tag: "h1"
-  }, props));
-};
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleRootPanel", function() { return toggleRootPanel; });
+function toggleRootPanel(element, panel) {
+  var root = document.getElementById("root");
 
-var h2 = function h2(props) {
-  return html(_objectSpread({
-    tag: "h2"
-  }, props));
-};
-
-var h3 = function h3(props) {
-  return html(_objectSpread({
-    tag: "h3"
-  }, props));
-};
-
-module.exports = {
-  html: html,
-  div: div,
-  span: span,
-  p: p,
-  h1: h1,
-  h2: h2,
-  h3: h3,
-  createNode: createNode,
-  divNode: divNode,
-  spanNode: spanNode,
-  pNode: pNode,
-  h1Node: h1Node,
-  h2Node: h2Node,
-  h3Node: h3Node
-};
+  if (element) {
+    root.removeChild(element);
+  } else {
+    root.appendChild(panel);
+  }
+}
 
 /***/ }),
 
@@ -51681,9 +51885,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRenderer", function() { return createRenderer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "animate", function() { return animate; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./colors */ "./src/util/colors.js");
+
 
 function createScene() {
-  return new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
+  var scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
+  scene.background = _colors__WEBPACK_IMPORTED_MODULE_1__["SANDSTONE"];
+  return scene;
 }
 function createCamera() {
   // FOV, AR, Near, Far
@@ -51693,9 +51901,10 @@ function createCamera() {
 }
 function createRenderer() {
   var renderer = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]({
-    canvas: document.querySelector("#webgl-canvas")
+    canvas: document.querySelector("#main-canvas")
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(_colors__WEBPACK_IMPORTED_MODULE_1__["SANDSTONE"]);
   return renderer;
 }
 function animate(renderer, scene, camera, action) {
@@ -51704,10 +51913,8 @@ function animate(renderer, scene, camera, action) {
   action({
     scene: scene,
     camera: camera
-  }); //   setTimeout( function() {
-
-  requestAnimationFrame(_animate); // }, 1000 / 900 );
-
+  });
+  requestAnimationFrame(_animate);
   renderer.render(scene, camera);
 }
 

@@ -1,8 +1,0 @@
-.book-show {
-  position: absolute;
-  z-index: 100;
-  display: flex;
-  width : 50%;
-  height: 50%;
-  margin: auto;
-}

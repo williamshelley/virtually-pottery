@@ -1,0 +1,46 @@
+
+/*
+SANDSTONE = "#F4CC70";
+BURNT_ORANGE = "#DE7A22";
+SEA = "#20948B";
+LAGOON = "6AB187";
+
+sidebar item hover color = rgba(80,100,150,0.5)
+*/
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 100;
+  width: 100%;
+  height: fit-content;
+  min-height: 100px;
+  max-height: 500px;
+  min-width: 100px;
+  max-width: 200px;
+  color: white;
+  padding: 12px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  background-color: #6AB187;
+  gap: 8px;
+  left: 0;
+  top: 0;
+  border-radius: 8px;
+  margin: 12px;
+}
+
+.sidebar-item {
+  width: 100%;
+  height: fit-content;
+  padding: 16px;
+  background-color: #20948B;
+  box-sizing: border-box;
+  border-radius: 8px;;
+}
+
+.sidebar-item:hover {
+  cursor: pointer;
+  background-color: rgba(80,100,150,0.5);
+}

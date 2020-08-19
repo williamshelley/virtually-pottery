@@ -1,7 +1,10 @@
 import * as THREE from 'three';
+import * as COLORS from './colors';
 
 export function createScene() {
-  return new THREE.Scene();
+  let scene = new THREE.Scene();
+  scene.background = COLORS.SANDSTONE;
+  return scene;
 }
 
 export function createCamera() {
@@ -13,18 +16,17 @@ export function createCamera() {
 
 export function createRenderer() {
   var renderer = new THREE.WebGLRenderer({
-    canvas: document.querySelector("#webgl-canvas"),
+    canvas: document.querySelector("#main-canvas"),
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(COLORS.SANDSTONE);
   return renderer;
 }
 
 export function animate(renderer, scene, camera, action) {
   let _animate = animate.bind(this, renderer, scene, camera, action);
   action({ scene, camera });
-//   setTimeout( function() {
   requestAnimationFrame( _animate );
-  // }, 1000 / 900 );
   renderer.render(scene, camera);
 }
 

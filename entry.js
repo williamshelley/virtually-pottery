@@ -1,7 +1,7 @@
 import {
   animatePot,
   createPot,
-} from "./src/main_canvas.js";
+} from "./src/pot.js";
 import {
   createSidebar
 } from "./src/options_sidebar.js";

@@ -8,6 +8,7 @@ export const createNode = ({
   value,
   min,
   max,
+  onInput,
   children = [],
 }) => {
   const childNode = document.createElement(tag);
@@ -19,6 +20,7 @@ export const createNode = ({
   if (value) { childNode.value = value; }
   if (min) { childNode.min = min; }
   if (max) { childNode.max = max; }
+  if (onInput) { childNode.oninput = onInput; }
 
   if (tag !== "input") {
     children.forEach(child => childNode.appendChild(child));

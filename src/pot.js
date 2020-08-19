@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Vector2 } from "three";
 
 const createPotPoint = ({
   pot,
@@ -6,7 +7,8 @@ const createPotPoint = ({
   radius,
   level,
   callback,
-  curve = 1
+  curve = 1,
+  yOffsetDivisor = 2
 }) => {
   if (pot) {
     radius = pot.radius;
@@ -14,7 +16,8 @@ const createPotPoint = ({
   }
 
   let x = Math.sin(curve * 0.2) * numLevels + radius;
-  let point = new THREE.Vector2(x, (level - radius) - numLevels / 2);
+  let y = (level - radius) - (numLevels / yOffsetDivisor);
+  let point = new THREE.Vector2(x, y);
   callback(point);
 }
 
@@ -25,21 +28,31 @@ export function createPot({
   zPosition = -40,
   pullSpeed = 0.01,
   maxWidth = 10,
-  minWidth = 0
+  minWidth = 0,
+  maxLevels = 40,
+  minLevels = 5,
 }) {
   const loader = new THREE.TextureLoader();
   let points = [];
 
+  if (numLevels > maxLevels) { numLevels = maxLevels; }
+  else if (numLevels < minLevels) { numLevels = minLevels; }
+
   function callback(point) {
     points.push(point);
   }
+
   for (let i = 0; i < numLevels; i++) {
     createPotPoint({
       radius,
       level: i,
       callback,
       numLevels
-    })
+    });
+  }
+
+  while (points.length < maxLevels) {
+    points.push(new THREE.Vector2());
   }
 
   let potGeo = new THREE.LatheGeometry(points);
@@ -48,6 +61,7 @@ export function createPot({
   });
   let pot = new THREE.Mesh(potGeo, potMat);
 
+  pot.camera = camera;
   pot.radius = radius;
   pot.numLevels = numLevels;
   pot.deltaPerLevel = points.map(() => 1.0);
@@ -133,6 +147,7 @@ export const makePull = ({
       })
     }
   }
+
   pot.geometry = new THREE.LatheGeometry(newPoints);
 }
 

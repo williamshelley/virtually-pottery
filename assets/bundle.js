@@ -95,7 +95,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _src_main_canvas_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/main_canvas.js */ "./src/main_canvas.js");
+/* harmony import */ var _src_pot_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/pot.js */ "./src/pot.js");
 /* harmony import */ var _src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/options_sidebar.js */ "./src/options_sidebar.js");
 /* harmony import */ var _src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js");
 
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var camera = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createCamera"])();
   var renderer = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["createRenderer"])();
   root.appendChild(renderer.domElement);
-  var pot = Object(_src_main_canvas_js__WEBPACK_IMPORTED_MODULE_0__["createPot"])({
+  var pot = Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_0__["createPot"])({
     radius: 5,
     numLevels: 20,
     camera: camera
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
   root.appendChild(sidebar);
 
   var _animateScene = function _animateScene() {
-    Object(_src_main_canvas_js__WEBPACK_IMPORTED_MODULE_0__["animatePot"])(pot, 0.03);
+    Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_0__["animatePot"])(pot, 0.03);
   };
 
   Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_2__["animate"])(renderer, scene, camera, _animateScene);
@@ -51455,31 +51455,84 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleHeightSlider", function() { return toggleHeightSlider; });
 /* harmony import */ var _util_panel_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/panel_util */ "./src/util/panel_util.js");
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony import */ var _pot__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pot */ "./src/pot.js");
+
 
 
 function createHeightSlider(pot) {
-  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
+  function _onInput() {
+    var input = document.getElementById("height-slider-input");
+    var displayValue = document.getElementById("height-slider-value");
+    pot.numLevels = parseInt(input.value);
+    displayValue.innerHTML = parseInt(input.value);
+  }
+
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
     id: "height-slider",
     className: "height-slider",
-    type: "range",
-    min: 5,
-    max: 40,
-    value: 20
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
+      id: "height-slider-input",
+      className: "height-slider-input",
+      type: "range",
+      min: 5,
+      max: 40,
+      value: pot.numLevels,
+      onInput: _onInput
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
+      id: "height-slider-value",
+      className: "height-slider-value",
+      innerText: pot.numLevels
+    })]
   });
 }
 function toggleHeightSlider(pot) {
   return function (event) {
     var element = document.getElementById("height-slider");
-    Object(_util_panel_util__WEBPACK_IMPORTED_MODULE_0__["toggleRootPanel"])(element, createHeightSlider());
+    Object(_util_panel_util__WEBPACK_IMPORTED_MODULE_0__["toggleRootPanel"])(element, createHeightSlider(pot));
   };
 }
 
 /***/ }),
 
-/***/ "./src/main_canvas.js":
-/*!****************************!*\
-  !*** ./src/main_canvas.js ***!
-  \****************************/
+/***/ "./src/options_sidebar.js":
+/*!********************************!*\
+  !*** ./src/options_sidebar.js ***!
+  \********************************/
+/*! exports provided: createSidebar */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSidebar", function() { return createSidebar; });
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
+/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
+
+
+
+
+function sidebarNode(name, onClick) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "sidebar-item",
+    innerText: name
+  });
+  node.addEventListener("click", onClick, false);
+  return node;
+}
+
+function createSidebar(pot) {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "sidebar",
+    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot))]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/pot.js":
+/*!********************!*\
+  !*** ./src/pot.js ***!
+  \********************/
 /*! exports provided: createPot, animatePot, makePull, onDrag */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -51492,6 +51545,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 
 
+
 var createPotPoint = function createPotPoint(_ref) {
   var pot = _ref.pot,
       numLevels = _ref.numLevels,
@@ -51499,7 +51553,9 @@ var createPotPoint = function createPotPoint(_ref) {
       level = _ref.level,
       callback = _ref.callback,
       _ref$curve = _ref.curve,
-      curve = _ref$curve === void 0 ? 1 : _ref$curve;
+      curve = _ref$curve === void 0 ? 1 : _ref$curve,
+      _ref$yOffsetDivisor = _ref.yOffsetDivisor,
+      yOffsetDivisor = _ref$yOffsetDivisor === void 0 ? 2 : _ref$yOffsetDivisor;
 
   if (pot) {
     radius = pot.radius;
@@ -51507,7 +51563,8 @@ var createPotPoint = function createPotPoint(_ref) {
   }
 
   var x = Math.sin(curve * 0.2) * numLevels + radius;
-  var point = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](x, level - radius - numLevels / 2);
+  var y = level - radius - numLevels / yOffsetDivisor;
+  var point = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](x, y);
   callback(point);
 };
 
@@ -51522,9 +51579,19 @@ function createPot(_ref2) {
       _ref2$maxWidth = _ref2.maxWidth,
       maxWidth = _ref2$maxWidth === void 0 ? 10 : _ref2$maxWidth,
       _ref2$minWidth = _ref2.minWidth,
-      minWidth = _ref2$minWidth === void 0 ? 0 : _ref2$minWidth;
+      minWidth = _ref2$minWidth === void 0 ? 0 : _ref2$minWidth,
+      _ref2$maxLevels = _ref2.maxLevels,
+      maxLevels = _ref2$maxLevels === void 0 ? 40 : _ref2$maxLevels,
+      _ref2$minLevels = _ref2.minLevels,
+      minLevels = _ref2$minLevels === void 0 ? 5 : _ref2$minLevels;
   var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
   var points = [];
+
+  if (numLevels > maxLevels) {
+    numLevels = maxLevels;
+  } else if (numLevels < minLevels) {
+    numLevels = minLevels;
+  }
 
   function callback(point) {
     points.push(point);
@@ -51539,11 +51606,16 @@ function createPot(_ref2) {
     });
   }
 
+  while (points.length < maxLevels) {
+    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]());
+  }
+
   var potGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
   var potMat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
     map: loader.load("../assets/images/earthenware.jpg")
   });
   var pot = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](potGeo, potMat);
+  pot.camera = camera;
   pot.radius = radius;
   pot.numLevels = numLevels;
   pot.deltaPerLevel = points.map(function () {
@@ -51673,41 +51745,6 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (
 
 /***/ }),
 
-/***/ "./src/options_sidebar.js":
-/*!********************************!*\
-  !*** ./src/options_sidebar.js ***!
-  \********************************/
-/*! exports provided: createSidebar */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSidebar", function() { return createSidebar; });
-/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
-/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
-/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
-
-
-
-
-function sidebarNode(name, onClick) {
-  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
-    className: "sidebar-item",
-    innerText: name
-  });
-  node.addEventListener("click", onClick, false);
-  return node;
-}
-
-function createSidebar(pot) {
-  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
-    className: "sidebar",
-    children: [sidebarNode("Choose Glaze", Object(_color_palette__WEBPACK_IMPORTED_MODULE_1__["toggleColorPalette"])(pot)), sidebarNode("Change Pot Height", Object(_height_slider__WEBPACK_IMPORTED_MODULE_2__["toggleHeightSlider"])(pot))]
-  });
-}
-
-/***/ }),
-
 /***/ "./src/util/colors.js":
 /*!****************************!*\
   !*** ./src/util/colors.js ***!
@@ -51762,6 +51799,7 @@ var createNode = function createNode(_ref) {
       value = _ref.value,
       min = _ref.min,
       max = _ref.max,
+      onInput = _ref.onInput,
       _ref$children = _ref.children,
       children = _ref$children === void 0 ? [] : _ref$children;
   var childNode = document.createElement(tag);
@@ -51796,6 +51834,10 @@ var createNode = function createNode(_ref) {
 
   if (max) {
     childNode.max = max;
+  }
+
+  if (onInput) {
+    childNode.oninput = onInput;
   }
 
   if (tag !== "input") {

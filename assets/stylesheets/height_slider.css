@@ -1,0 +1,15 @@
+.height-slider {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #6AB187;
+  z-index: 100;
+  padding: 8px;
+}
+
+.height-slider-value {
+  color: white;
+}
+

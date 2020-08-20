@@ -2,7 +2,9 @@
 @import "./height_slider.scss";
 @import "./sidebar.scss";
 @import "./toggle.scss";
+@import "./info.scss";
 @import "./colors.scss";
+@import "./options_overlay.scss";
 
 html {
   background-color: $MAIN-BG;
@@ -20,3 +22,19 @@ canvas {
   z-index: 0;
   background-size: cover;
 }
+
+div {
+  z-index: 100;
+  display: inherit;
+
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+h1, h2, h3, p, div, input {
+  margin: 0;
+  padding: 0;
+  color: $TEXT-COLOR;
+}
+

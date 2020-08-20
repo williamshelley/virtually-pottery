@@ -84,8 +84,8 @@ export function createPot({
   return pot;
 }
 
-export const animatePot = (pot, rotationSpeed = 0.03) => {
-  pot.rotation.y += rotationSpeed;
+export const animatePot = (pot) => {
+  pot.rotation.y += pot.pullSpeed * 10;
 }
 
 

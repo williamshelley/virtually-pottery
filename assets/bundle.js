@@ -108,11 +108,15 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js");
 /* harmony import */ var _src_pot_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/pot.js */ "./src/pot.js");
-/* harmony import */ var _src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/options_sidebar.js */ "./src/options_sidebar.js");
+/* harmony import */ var _src_sidebar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/sidebar.js */ "./src/sidebar.js");
 /* harmony import */ var _src_color_palette__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./src/color_palette */ "./src/color_palette.js");
 /* harmony import */ var _src_height_slider_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./src/height_slider.js */ "./src/height_slider.js");
 /* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./assets/stylesheets/main.scss */ "./assets/stylesheets/main.scss");
 /* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _src_info_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./src/info.js */ "./src/info.js");
+/* harmony import */ var _src_options_overlay__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./src/options_overlay */ "./src/options_overlay.js");
+
+
 
 
 
@@ -123,8 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var root = document.getElementById("root");
   var scene = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createScene"])();
   var camera = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createCamera"])();
-  var renderer = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createRenderer"])(); // add instructions
-
+  var renderer = Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["createRenderer"])();
   root.appendChild(renderer.domElement);
   var pot = Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_1__["createPot"])({
     radius: 5,
@@ -132,15 +135,31 @@ document.addEventListener("DOMContentLoaded", function () {
     camera: camera
   });
   scene.add(pot);
-  var sidebar = Object(_src_options_sidebar_js__WEBPACK_IMPORTED_MODULE_2__["createSidebar"])(pot);
-  var colorPalette = Object(_src_color_palette__WEBPACK_IMPORTED_MODULE_3__["createColorPalette"])(pot);
-  var heightSlider = Object(_src_height_slider_js__WEBPACK_IMPORTED_MODULE_4__["createHeightSlider"])(pot);
-  root.appendChild(sidebar);
-  root.appendChild(colorPalette);
-  root.appendChild(heightSlider);
+  var optionsOverlay = Object(_src_options_overlay__WEBPACK_IMPORTED_MODULE_7__["default"])(pot);
+  root.appendChild(optionsOverlay);
+  window.addEventListener("resize", function () {
+    camera.updateProjectionMatrix();
+    camera.aspect = window.innerWidth / window.innerHeight;
+    scene.children.forEach(function (obj) {
+      obj.camera = camera;
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  var stopTextSelection = function stopTextSelection() {
+    if (document.selection) {
+      document.selection.empty();
+    } else {
+      window.getSelection().removeAllRanges();
+    }
+  };
+
+  window.addEventListener("mousemove", function (e) {
+    stopTextSelection();
+  });
 
   var _animateScene = function _animateScene() {
-    Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_1__["animatePot"])(pot, 0.03);
+    Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_1__["animatePot"])(pot);
   };
 
   Object(_src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__["animate"])(renderer, scene, camera, _animateScene);
@@ -51517,47 +51536,72 @@ function toggleHeightSlider(pot) {
 
 /***/ }),
 
-/***/ "./src/options_sidebar.js":
-/*!********************************!*\
-  !*** ./src/options_sidebar.js ***!
-  \********************************/
-/*! exports provided: createSidebar */
+/***/ "./src/info.js":
+/*!*********************!*\
+  !*** ./src/info.js ***!
+  \*********************/
+/*! exports provided: createInfoOverlay */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSidebar", function() { return createSidebar; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInfoOverlay", function() { return createInfoOverlay; });
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
-/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
-/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
-/* harmony import */ var _pull_toggle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pull_toggle */ "./src/pull_toggle.js");
-/* harmony import */ var _smooth_toggle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth_toggle */ "./src/smooth_toggle.js");
 
 
-
-
-
-
-function SidebarNode(name, onClick, children) {
-  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
-    className: "sidebar-item",
-    innerText: name,
-    children: children
-  });
-
-  if (onClick) {
-    node.addEventListener("click", onClick, false);
-  }
-
-  return node;
-}
-
-function createSidebar(pot) {
+var Header = function Header() {
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
-    className: "sidebar",
-    children: [Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["default"])(pot), Object(_smooth_toggle__WEBPACK_IMPORTED_MODULE_4__["default"])(pot)]
+    className: "header",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["h1Node"])({
+      innerText: "Make that Pot!"
+    })]
   });
-}
+};
+
+var createInfoOverlay = function createInfoOverlay() {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    id: "info",
+    children: [Header()]
+  });
+};
+
+/***/ }),
+
+/***/ "./src/options_overlay.js":
+/*!********************************!*\
+  !*** ./src/options_overlay.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony import */ var _sidebar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sidebar */ "./src/sidebar.js");
+/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
+/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
+/* harmony import */ var _info__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./info */ "./src/info.js");
+
+
+
+
+
+
+var createOptionsOverlay = function createOptionsOverlay(pot) {
+  var sidebar = Object(_sidebar__WEBPACK_IMPORTED_MODULE_1__["createSidebar"])(pot);
+  var colorPalette = Object(_color_palette__WEBPACK_IMPORTED_MODULE_2__["createColorPalette"])(pot);
+  var heightSlider = Object(_height_slider__WEBPACK_IMPORTED_MODULE_3__["createHeightSlider"])(pot);
+  var info = Object(_info__WEBPACK_IMPORTED_MODULE_4__["createInfoOverlay"])();
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "options-overlay",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+      className: "top",
+      children: [sidebar, info, colorPalette]
+    }), heightSlider]
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (createOptionsOverlay);
 
 /***/ }),
 
@@ -51678,8 +51722,7 @@ function createPot(_ref2) {
   return pot;
 }
 var animatePot = function animatePot(pot) {
-  var rotationSpeed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.03;
-  pot.rotation.y += rotationSpeed;
+  pot.rotation.y += pot.pullSpeed * 10;
 }; // Wall smoothing based on average of point below and point above mouse pointer
 
 var smoothWallPoints = function smoothWallPoints(i, pot) {
@@ -51846,6 +51889,50 @@ function PullToggleNode(pot) {
 
 /***/ }),
 
+/***/ "./src/sidebar.js":
+/*!************************!*\
+  !*** ./src/sidebar.js ***!
+  \************************/
+/*! exports provided: createSidebar */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSidebar", function() { return createSidebar; });
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
+/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
+/* harmony import */ var _pull_toggle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pull_toggle */ "./src/pull_toggle.js");
+/* harmony import */ var _smooth_toggle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth_toggle */ "./src/smooth_toggle.js");
+
+
+
+
+
+
+function SidebarNode(name, onClick, children) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "sidebar-item",
+    innerText: name,
+    children: children
+  });
+
+  if (onClick) {
+    node.addEventListener("click", onClick, false);
+  }
+
+  return node;
+}
+
+function createSidebar(pot) {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "sidebar",
+    children: [Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["default"])(pot), Object(_smooth_toggle__WEBPACK_IMPORTED_MODULE_4__["default"])(pot)]
+  });
+}
+
+/***/ }),
+
 /***/ "./src/smooth_toggle.js":
 /*!******************************!*\
   !*** ./src/smooth_toggle.js ***!
@@ -51864,7 +51951,7 @@ function SmoothToggleNode(pot) {
   var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
     className: "toggle-container",
     children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
-      innerText: "Normal"
+      innerText: "Shape"
     }), Object(_util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["createToggle"])(pot, _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["SMOOTH_TOGGLE"]), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
       innerText: "Smooth"
     })]
@@ -52066,7 +52153,8 @@ function createScene() {
 }
 function createCamera() {
   // FOV, AR, Near, Far
-  var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  var aspectRatio = window.innerWidth / window.innerHeight;
+  var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](75, aspectRatio, 0.1, 1000);
   camera.position.z = 5;
   return camera;
 }
@@ -52163,6 +52251,9 @@ var toggleAction = function toggleAction(pot, id) {
   switch (id) {
     case PULL_TOGGLE:
       pot.pullDirection = toggleInput.checked ? 1 : -1;
+      pot.smooth = false;
+      var smoothToggle = document.getElementById(SMOOTH_TOGGLE);
+      toggleOff(smoothToggle);
       return;
 
     case SMOOTH_TOGGLE:
@@ -52174,14 +52265,22 @@ var toggleAction = function toggleAction(pot, id) {
   }
 };
 
+function toggleOff(element) {
+  element.classList.remove("toggled");
+}
+
+function toggleOn(element) {
+  element.classList.add("toggled");
+}
+
 function onToggle(pot, id) {
   return function (event) {
     var toggle = document.getElementById(id);
 
     if (toggle.classList.contains("toggled")) {
-      toggle.classList.remove("toggled");
+      toggleOff(toggle);
     } else {
-      toggle.classList.add("toggled");
+      toggleOn(toggle);
     }
 
     toggleAction(pot, id);

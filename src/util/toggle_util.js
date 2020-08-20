@@ -12,6 +12,9 @@ const toggleAction = (pot, id) => {
   switch(id) {
     case PULL_TOGGLE:
       pot.pullDirection = toggleInput.checked ? 1 : -1;
+      pot.smooth = false;
+      const smoothToggle = document.getElementById(SMOOTH_TOGGLE);
+      toggleOff(smoothToggle);
       return;
     case SMOOTH_TOGGLE:
       pot.smooth = !pot.smooth;
@@ -20,13 +23,21 @@ const toggleAction = (pot, id) => {
   }
 }
 
+function toggleOff(element) {
+  element.classList.remove("toggled");
+}
+
+function toggleOn(element) {
+  element.classList.add("toggled");
+}
+
 function onToggle(pot, id) {
   return event => {
     const toggle = document.getElementById(id);
     if (toggle.classList.contains("toggled")) {
-      toggle.classList.remove("toggled");
+      toggleOff(toggle);
     } else {
-      toggle.classList.add("toggled");
+      toggleOn(toggle)
     }
 
     toggleAction(pot, id);

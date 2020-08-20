@@ -5,7 +5,7 @@ export default function SmoothToggleNode(pot) {
   let node = (divNode({
     className: "toggle-container",
     children: [
-      pNode({ innerText: "Normal" }),
+      pNode({ innerText: "Shape" }),
       createToggle(pot, SMOOTH_TOGGLE),
       pNode({ innerText: "Smooth" }),
     ]

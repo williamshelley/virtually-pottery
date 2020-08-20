@@ -108,16 +108,10 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_util_threejs_util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/util/threejs_util.js */ "./src/util/threejs_util.js");
 /* harmony import */ var _src_pot_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/pot.js */ "./src/pot.js");
-/* harmony import */ var _src_sidebar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/sidebar.js */ "./src/sidebar.js");
-/* harmony import */ var _src_color_palette__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./src/color_palette */ "./src/color_palette.js");
-/* harmony import */ var _src_height_slider_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./src/height_slider.js */ "./src/height_slider.js");
-/* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./assets/stylesheets/main.scss */ "./assets/stylesheets/main.scss");
-/* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _src_info_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./src/info.js */ "./src/info.js");
-/* harmony import */ var _src_options_overlay__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./src/options_overlay */ "./src/options_overlay.js");
-
-
-
+/* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./assets/stylesheets/main.scss */ "./assets/stylesheets/main.scss");
+/* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _src_options_overlay__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./src/options_overlay */ "./src/options_overlay.js");
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 
 
 
@@ -135,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
     camera: camera
   });
   scene.add(pot);
-  var optionsOverlay = Object(_src_options_overlay__WEBPACK_IMPORTED_MODULE_7__["default"])(pot);
+  var optionsOverlay = Object(_src_options_overlay__WEBPACK_IMPORTED_MODULE_3__["default"])(pot);
   root.appendChild(optionsOverlay);
   window.addEventListener("resize", function () {
     camera.updateProjectionMatrix();
@@ -51435,6 +51429,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleColorPalette", function() { return toggleColorPalette; });
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 /* harmony import */ var _util_panel_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/panel_util */ "./src/util/panel_util.js");
+/* harmony import */ var _util_toggle_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/toggle_util */ "./src/util/toggle_util.js");
+
 
 
 
@@ -51464,6 +51460,8 @@ function createColorPalette(pot) {
 
   function _onClick(newMaterial) {
     return function (e) {
+      var wireframeToggle = document.getElementById(_util_toggle_util__WEBPACK_IMPORTED_MODULE_2__["WIREFRAME_TOGGLE"]);
+      Object(_util_toggle_util__WEBPACK_IMPORTED_MODULE_2__["toggleOff"])(wireframeToggle);
       pot.changeMaterial(_src(newMaterial));
     };
   }
@@ -51485,48 +51483,130 @@ function toggleColorPalette(pot) {
 
 /***/ }),
 
-/***/ "./src/height_slider.js":
-/*!******************************!*\
-  !*** ./src/height_slider.js ***!
-  \******************************/
-/*! exports provided: createHeightSlider, toggleHeightSlider */
+/***/ "./src/dimension_slider.js":
+/*!*********************************!*\
+  !*** ./src/dimension_slider.js ***!
+  \*********************************/
+/*! exports provided: HEIGHT_SLIDER, WIDTH_SLIDER, createDimensionSlider, createHeightSlider, createWidthSlider, toggleHeightSlider */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HEIGHT_SLIDER", function() { return HEIGHT_SLIDER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WIDTH_SLIDER", function() { return WIDTH_SLIDER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDimensionSlider", function() { return createDimensionSlider; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHeightSlider", function() { return createHeightSlider; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWidthSlider", function() { return createWidthSlider; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleHeightSlider", function() { return toggleHeightSlider; });
 /* harmony import */ var _util_panel_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/panel_util */ "./src/util/panel_util.js");
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 
 
-function createHeightSlider(pot) {
-  function _onInput() {
-    var input = document.getElementById("height-slider-input");
-    var displayValue = document.getElementById("height-slider-value");
-    pot.numLevels = parseInt(input.value);
-    displayValue.innerHTML = parseInt(input.value);
-  }
+var HEIGHT_SLIDER = "height-slider";
+var WIDTH_SLIDER = "width-slider";
 
-  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
-    id: "height-slider",
-    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["h3Node"])({
-      innerText: "Change height using slider"
-    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
-      children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
-        id: "height-slider-input",
-        type: "range",
+var sliderInfo = function sliderInfo(pot, id) {
+  switch (id) {
+    case HEIGHT_SLIDER:
+      return {
+        innerText: "Change height using slider",
         min: 5,
         max: 40,
         value: pot.numLevels,
-        onInput: _onInput
+        onInput: function onInput() {
+          var input = document.getElementById(id + "-input");
+          var displayValue = document.getElementById(id + "-value");
+          pot.numLevels = parseInt(input.value);
+          displayValue.innerHTML = parseInt(input.value);
+        }
+      };
+
+    case WIDTH_SLIDER:
+      var upperRange = 100;
+      return {
+        innerText: "Change width using slider",
+        min: 1,
+        max: upperRange,
+        value: pot.baseRadius,
+        onInput: function onInput() {
+          var input = document.getElementById(id + "-input");
+          var displayValue = document.getElementById(id + "-value");
+          pot.baseRadius = parseFloat(input.value) / upperRange;
+          displayValue.innerHTML = parseFloat(pot.baseRadius).toFixed(1);
+        }
+      };
+
+    default:
+      return undefined;
+  }
+};
+
+function createDimensionSlider(pot, id) {
+  var _sliderInfo = sliderInfo(pot, id),
+      innerText = _sliderInfo.innerText,
+      value = _sliderInfo.value,
+      min = _sliderInfo.min,
+      max = _sliderInfo.max,
+      onInput = _sliderInfo.onInput;
+
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
+    id: id,
+    className: "dimension-slider",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["h3Node"])({
+      innerText: innerText
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
+      children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["inputNode"])({
+        id: id + "-input",
+        type: "range",
+        min: min,
+        max: max,
+        value: value,
+        onInput: onInput
       }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
-        id: "height-slider-value",
-        innerText: pot.numLevels
+        id: id + "-value",
+        innerText: value
       })]
     })]
   });
 }
+function createHeightSlider(pot) {
+  return createDimensionSlider(pot, HEIGHT_SLIDER);
+}
+function createWidthSlider(pot) {
+  return createDimensionSlider(pot, WIDTH_SLIDER);
+} // export function createHeightSlider(pot) {
+//   function _onInput() {
+//     const input = document.getElementById("height-slider-input");
+//     const displayValue = document.getElementById("height-slider-value");
+//     pot.numLevels = parseInt(input.value);
+//     displayValue.innerHTML = parseInt(input.value);
+//   }
+//   return divNode({
+//     id: "height-slider",
+//     children: [
+//       h3Node({
+//         innerText: "Change height using slider"
+//       }),
+//       divNode({
+//         children: [
+//           inputNode({
+//             id: "height-slider-input",
+//             type: "range",
+//             min: 5,
+//             max: 40,
+//             value: pot.numLevels,
+//             onInput: _onInput,
+//           }),
+//           pNode({
+//             id: "height-slider-value",
+//             innerText: pot.numLevels
+//           })
+//         ]
+//       })
+//     ]
+//   });
+// }
+
 function toggleHeightSlider(pot) {
   return function (event) {
     var element = document.getElementById("height-slider");
@@ -51540,12 +51620,12 @@ function toggleHeightSlider(pot) {
 /*!*********************!*\
   !*** ./src/info.js ***!
   \*********************/
-/*! exports provided: createInfoOverlay */
+/*! exports provided: createInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInfoOverlay", function() { return createInfoOverlay; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInfo", function() { return createInfo; });
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 
 
@@ -51558,10 +51638,47 @@ var Header = function Header() {
   });
 };
 
-var createInfoOverlay = function createInfoOverlay() {
+var createInfo = function createInfo() {
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     id: "info",
     children: [Header()]
+  });
+}; // background: linear-gradient(-45deg, #EE7752, #BA382F,#E73C7E, #8942A8, #23A6D5, #23D5AB);
+// background: linear-gradient(-45deg, #EE7752,#8942A8, #23A6D5, #23D5AB);
+// background-size: 400% 400%;
+// animation: bg-change 10s ease-in-out infinite alternate;
+// @keyframes bg-change {
+//   0% {
+//     background-position: 0 0;
+//   }
+//   50% {
+//     background-position: 50% 50%;
+//   }
+//   100% {
+//     background-position: 100% 100%;
+//   }
+// }
+
+/***/ }),
+
+/***/ "./src/instructions.js":
+/*!*****************************!*\
+  !*** ./src/instructions.js ***!
+  \*****************************/
+/*! exports provided: createInstructions */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createInstructions", function() { return createInstructions; });
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+
+var createInstructions = function createInstructions() {
+  return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    id: "instructions",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
+      innerText: "These are some helpful instructions!"
+    })]
   });
 };
 
@@ -51579,8 +51696,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 /* harmony import */ var _sidebar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sidebar */ "./src/sidebar.js");
 /* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
-/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
+/* harmony import */ var _dimension_slider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dimension_slider */ "./src/dimension_slider.js");
 /* harmony import */ var _info__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./info */ "./src/info.js");
+/* harmony import */ var _instructions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./instructions */ "./src/instructions.js");
+
 
 
 
@@ -51590,14 +51709,22 @@ __webpack_require__.r(__webpack_exports__);
 var createOptionsOverlay = function createOptionsOverlay(pot) {
   var sidebar = Object(_sidebar__WEBPACK_IMPORTED_MODULE_1__["createSidebar"])(pot);
   var colorPalette = Object(_color_palette__WEBPACK_IMPORTED_MODULE_2__["createColorPalette"])(pot);
-  var heightSlider = Object(_height_slider__WEBPACK_IMPORTED_MODULE_3__["createHeightSlider"])(pot);
-  var info = Object(_info__WEBPACK_IMPORTED_MODULE_4__["createInfoOverlay"])();
+  var heightSlider = Object(_dimension_slider__WEBPACK_IMPORTED_MODULE_3__["createHeightSlider"])(pot);
+  var widthSlider = Object(_dimension_slider__WEBPACK_IMPORTED_MODULE_3__["createWidthSlider"])(pot);
+  var info = Object(_info__WEBPACK_IMPORTED_MODULE_4__["createInfo"])();
+  var instructions = Object(_instructions__WEBPACK_IMPORTED_MODULE_5__["createInstructions"])();
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "options-overlay",
     children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
       className: "top",
-      children: [sidebar, info, colorPalette]
-    }), heightSlider]
+      children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+        className: "left",
+        children: [sidebar, instructions]
+      }), info, colorPalette]
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+      className: "bottom",
+      children: [heightSlider, widthSlider]
+    })]
   });
 };
 
@@ -51630,17 +51757,21 @@ var createPotPoint = function createPotPoint(_ref) {
       radius = _ref.radius,
       level = _ref.level,
       callback = _ref.callback,
+      _ref$baseRadius = _ref.baseRadius,
+      baseRadius = _ref$baseRadius === void 0 ? 0.2 : _ref$baseRadius,
       _ref$curve = _ref.curve,
       curve = _ref$curve === void 0 ? 1 : _ref$curve,
       _ref$yOffsetDivisor = _ref.yOffsetDivisor,
       yOffsetDivisor = _ref$yOffsetDivisor === void 0 ? 2 : _ref$yOffsetDivisor;
 
   if (pot) {
+    baseRadius = pot.baseRadius;
     radius = pot.radius;
     numLevels = pot.numLevels;
-  }
+  } // console.log(baseRadius);
 
-  var x = Math.sin(curve * 0.2) * numLevels + radius;
+
+  var x = Math.sin(curve * baseRadius) * numLevels + radius;
   var y = level - radius - numLevels / yOffsetDivisor;
   var point = new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](x, y);
   callback(point);
@@ -51651,8 +51782,8 @@ function createPot(_ref2) {
   var radius = _ref2.radius,
       numLevels = _ref2.numLevels,
       camera = _ref2.camera,
-      _ref2$zPosition = _ref2.zPosition,
-      zPosition = _ref2$zPosition === void 0 ? -40 : _ref2$zPosition,
+      _ref2$baseRadius = _ref2.baseRadius,
+      baseRadius = _ref2$baseRadius === void 0 ? 0.2 : _ref2$baseRadius,
       _ref2$pullSpeed = _ref2.pullSpeed,
       pullSpeed = _ref2$pullSpeed === void 0 ? 0.01 : _ref2$pullSpeed,
       _ref2$maxWidth = _ref2.maxWidth,
@@ -51696,6 +51827,8 @@ function createPot(_ref2) {
     map: loader.load("../assets/images/earthenware.jpg")
   });
   var pot = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](potGeo, potMat);
+  pot.material.side = three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"];
+  pot.baseRadius = baseRadius;
   pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
   pot.radius = radius;
@@ -51706,7 +51839,6 @@ function createPot(_ref2) {
   pot.pullSpeed = pullSpeed;
   pot.maxWidth = maxWidth;
   pot.minWidth = minWidth;
-  pot.position.z = zPosition - numLevels;
   pot.pullDirection = -1;
   pot.smooth = false;
   var isMoving = false;
@@ -51900,11 +52032,9 @@ function PullToggleNode(pot) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSidebar", function() { return createSidebar; });
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
-/* harmony import */ var _color_palette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./color_palette */ "./src/color_palette.js");
-/* harmony import */ var _height_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./height_slider */ "./src/height_slider.js");
-/* harmony import */ var _pull_toggle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pull_toggle */ "./src/pull_toggle.js");
-/* harmony import */ var _smooth_toggle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./smooth_toggle */ "./src/smooth_toggle.js");
-
+/* harmony import */ var _pull_toggle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pull_toggle */ "./src/pull_toggle.js");
+/* harmony import */ var _smooth_toggle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./smooth_toggle */ "./src/smooth_toggle.js");
+/* harmony import */ var _wireframe_toggle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./wireframe_toggle */ "./src/wireframe_toggle.js");
 
 
 
@@ -51927,7 +52057,7 @@ function SidebarNode(name, onClick, children) {
 function createSidebar(pot) {
   return Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
     className: "sidebar",
-    children: [Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_3__["default"])(pot), Object(_smooth_toggle__WEBPACK_IMPORTED_MODULE_4__["default"])(pot)]
+    children: [Object(_pull_toggle__WEBPACK_IMPORTED_MODULE_1__["default"])(pot), Object(_smooth_toggle__WEBPACK_IMPORTED_MODULE_2__["default"])(pot), Object(_wireframe_toggle__WEBPACK_IMPORTED_MODULE_3__["default"])(pot)]
   });
 }
 
@@ -52155,7 +52285,9 @@ function createCamera() {
   // FOV, AR, Near, Far
   var aspectRatio = window.innerWidth / window.innerHeight;
   var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](75, aspectRatio, 0.1, 1000);
-  camera.position.z = 5;
+  camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 0));
+  camera.position.y = 10;
+  camera.position.z = 80;
   return camera;
 }
 function createRenderer() {
@@ -52229,18 +52361,22 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.onMove = onMove;
 /*!*********************************!*\
   !*** ./src/util/toggle_util.js ***!
   \*********************************/
-/*! exports provided: PULL_TOGGLE, SMOOTH_TOGGLE, createToggle */
+/*! exports provided: PULL_TOGGLE, SMOOTH_TOGGLE, WIREFRAME_TOGGLE, toggleOff, toggleOn, createToggle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PULL_TOGGLE", function() { return PULL_TOGGLE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SMOOTH_TOGGLE", function() { return SMOOTH_TOGGLE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WIREFRAME_TOGGLE", function() { return WIREFRAME_TOGGLE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleOff", function() { return toggleOff; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleOn", function() { return toggleOn; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createToggle", function() { return createToggle; });
 /* harmony import */ var _html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./html_util */ "./src/util/html_util.js");
 
 var PULL_TOGGLE = "pull-toggle";
 var SMOOTH_TOGGLE = "smooth-toggle";
+var WIREFRAME_TOGGLE = "wireframe-toggle";
 
 var toggleAction = function toggleAction(pot, id) {
   var toggleInput = document.getElementById(id + "-input");
@@ -52260,6 +52396,10 @@ var toggleAction = function toggleAction(pot, id) {
       pot.smooth = !pot.smooth;
       return;
 
+    case WIREFRAME_TOGGLE:
+      pot.material.wireframe = !pot.material.wireframe;
+      return;
+
     default:
       return;
   }
@@ -52268,7 +52408,6 @@ var toggleAction = function toggleAction(pot, id) {
 function toggleOff(element) {
   element.classList.remove("toggled");
 }
-
 function toggleOn(element) {
   element.classList.add("toggled");
 }
@@ -52289,6 +52428,7 @@ function onToggle(pot, id) {
 
 function createToggle(pot, id) {
   var toggle = Object(_html_util__WEBPACK_IMPORTED_MODULE_0__["divNode"])({
+    className: "toggle",
     id: id,
     children: [Object(_html_util__WEBPACK_IMPORTED_MODULE_0__["inputNode"])({
       id: id + "-input",
@@ -52297,6 +52437,34 @@ function createToggle(pot, id) {
   });
   toggle.addEventListener("click", onToggle(pot, id));
   return toggle;
+}
+
+/***/ }),
+
+/***/ "./src/wireframe_toggle.js":
+/*!*********************************!*\
+  !*** ./src/wireframe_toggle.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return WireframeToggleNode; });
+/* harmony import */ var _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/toggle_util */ "./src/util/toggle_util.js");
+/* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
+
+
+function WireframeToggleNode(pot) {
+  var node = Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["divNode"])({
+    className: "toggle-container",
+    children: [Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
+      innerText: "Normal"
+    }), Object(_util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["createToggle"])(pot, _util_toggle_util__WEBPACK_IMPORTED_MODULE_0__["WIREFRAME_TOGGLE"]), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
+      innerText: "Wireframe"
+    })]
+  });
+  return node;
 }
 
 /***/ })

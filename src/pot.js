@@ -7,15 +7,18 @@ const createPotPoint = ({
   radius,
   level,
   callback,
+  baseRadius = 0.2,
   curve = 1,
   yOffsetDivisor = 2
 }) => {
   if (pot) {
+    baseRadius = pot.baseRadius;
     radius = pot.radius;
     numLevels = pot.numLevels;
   }
 
-  let x = Math.sin(curve * 0.2) * numLevels + radius;
+  // console.log(baseRadius);
+  let x = Math.sin(curve * baseRadius) * numLevels + radius;
   let y = (level - radius) - (numLevels / yOffsetDivisor);
   let point = new THREE.Vector2(x, y);
   callback(point);
@@ -26,7 +29,7 @@ export function createPot({
   radius,
   numLevels,
   camera,
-  zPosition = -40,
+  baseRadius = 0.2,
   pullSpeed = 0.01,
   maxWidth = 3,
   minWidth = 0,
@@ -57,10 +60,12 @@ export function createPot({
 
   let potGeo = new THREE.LatheGeometry(points, numPointsPerLevel);
   let potMat = new THREE.MeshBasicMaterial({
-    map: loader.load("../assets/images/earthenware.jpg")
+    map: loader.load("../assets/images/earthenware.jpg"),
   });
   let pot = new THREE.Mesh(potGeo, potMat);
+  pot.material.side = THREE.DoubleSide;
 
+  pot.baseRadius = baseRadius;
   pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
   pot.radius = radius;
@@ -69,7 +74,6 @@ export function createPot({
   pot.pullSpeed = pullSpeed;
   pot.maxWidth = maxWidth;
   pot.minWidth = minWidth;
-  pot.position.z = zPosition - numLevels;
   pot.pullDirection = -1;
   pot.smooth = false;
 

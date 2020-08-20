@@ -1,14 +1,7 @@
-import {
-  divNode
-} from "./util/html_util";
-import {
-  toggleColorPalette
-} from "./color_palette";
-import {
-  toggleHeightSlider
-} from "./height_slider";
+import { divNode } from "./util/html_util";
 import PullToggleNode from "./pull_toggle";
 import SmoothToggleNode from "./smooth_toggle";
+import WireframeToggleNode from "./wireframe_toggle";
 
 function SidebarNode(name, onClick, children) {
   let node = (divNode({
@@ -30,6 +23,7 @@ export function createSidebar(pot) {
     children: [
       PullToggleNode(pot),
       SmoothToggleNode(pot),
+      WireframeToggleNode(pot),
     ]
   });
 }

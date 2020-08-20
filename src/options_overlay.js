@@ -1,8 +1,9 @@
 import { divNode } from "./util/html_util"
 import { createSidebar } from "./sidebar";
 import { createColorPalette } from "./color_palette";
-import { createHeightSlider } from "./height_slider";
-import { createInfoOverlay } from "./info";
+import { createHeightSlider, createWidthSlider } from "./dimension_slider";
+import { createInfo } from "./info";
+import { createInstructions } from "./instructions";
 
 const createOptionsOverlay = (pot) => {
   const sidebar = createSidebar(pot);
@@ -10,8 +11,10 @@ const createOptionsOverlay = (pot) => {
   const colorPalette = createColorPalette(pot);
 
   const heightSlider = createHeightSlider(pot);
+  const widthSlider = createWidthSlider(pot);
 
-  const info = createInfoOverlay();
+  const info = createInfo();
+  const instructions = createInstructions();
 
   return divNode({
     className: "options-overlay",
@@ -19,12 +22,24 @@ const createOptionsOverlay = (pot) => {
         divNode({
           className: "top",
           children: [
-            sidebar,
+            divNode({
+              className: "left",
+              children: [
+                sidebar,
+                instructions
+              ]
+            }),
             info,
             colorPalette
           ]
       }),
-      heightSlider,
+      divNode({
+        className: "bottom",
+        children: [
+          heightSlider,
+          widthSlider,
+        ]
+      })
     ]
   })
 }

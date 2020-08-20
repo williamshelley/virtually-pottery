@@ -7,6 +7,7 @@ import {
 import {
   toggleRootPanel
 } from "./util/panel_util";
+import { WIREFRAME_TOGGLE, toggleOff } from "./util/toggle_util";
 
 function colorOptionNode(name, src, onClick) {
   let node = (divNode({
@@ -40,6 +41,8 @@ export function createColorPalette(pot) {
 
   function _onClick(newMaterial) {
     return e => {
+      const wireframeToggle = document.getElementById(WIREFRAME_TOGGLE);
+      toggleOff(wireframeToggle);
       pot.changeMaterial(_src(newMaterial));
     }
   }

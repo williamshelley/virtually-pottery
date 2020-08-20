@@ -14,6 +14,7 @@ module.exports = {
   plugins: [new MiniCssExtractPlugin()],
   module: {
     rules: [
+      
       {
         exclude: /(node_modules)/,
         use: {
@@ -29,17 +30,27 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              // you can specify a publicPath here
-              // by default it uses publicPath in webpackOptions.output
               publicPath: "../assets/stylesheets",
-              // hmr: process.env.NODE_ENV === "development"
             }
           },
           "css-loader",
           "sass-loader",
           "postcss-loader"
         ]
-      }
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              outputPath: "images/",
+              publicPath: "images/"
+            }
+          }
+        ]
+      },
     ]
   },
   devtool: 'source-map'

@@ -2,26 +2,22 @@ import {
   createScene,
   createCamera,
   createRenderer,
-  animate
+  animate,
 } from "./src/util/threejs_util.js";
 import { animatePot, createPot } from "./src/pot.js";
-import { createSidebar } from "./src/sidebar.js";
-import { createColorPalette } from "./src/color_palette";
-import { createHeightSlider } from "./src/height_slider.js";
 
 import "./assets/stylesheets/main.scss";
-import { createInfoOverlay } from "./src/info.js";
 import createOptionsOverlay from "./src/options_overlay";
+
+import * as THREE from "three";
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.getElementById("root");
 
-  var scene = createScene();
-  var camera = createCamera();
-  var renderer = createRenderer();
-
+  let scene = createScene();
+  let camera = createCamera();
+  let renderer = createRenderer();
   root.appendChild(renderer.domElement);
-
 
   let pot = createPot({ radius: 5, numLevels: 20, camera });
   scene.add(pot);

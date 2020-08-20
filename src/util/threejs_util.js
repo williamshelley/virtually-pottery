@@ -11,7 +11,9 @@ export function createCamera() {
   // FOV, AR, Near, Far
   const aspectRatio = window.innerWidth / window.innerHeight;
   let camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
-  camera.position.z = 5;
+  camera.lookAt(new THREE.Vector3(0,0,0));
+  camera.position.y = 10;
+  camera.position.z = 80;
   return camera;
 }
 
@@ -22,7 +24,6 @@ export function createRenderer() {
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x000000, 0);
-  
   return renderer;
 }
 

@@ -1,12 +1,8 @@
 @import "./colors.scss";
 
-#height-slider {
+.dimension-slider {
   display: flex;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 80%;
+  max-width: 500px;
   max-height: fit-content;
   background: $DIV-BG;
   z-index: 100;

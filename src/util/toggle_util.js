@@ -2,6 +2,7 @@ import { inputNode, divNode } from "./html_util";
 
 export const PULL_TOGGLE = "pull-toggle";
 export const SMOOTH_TOGGLE = "smooth-toggle";
+export const WIREFRAME_TOGGLE = "wireframe-toggle";
 
 const toggleAction = (pot, id) => {
   const toggleInput = document.getElementById(id + "-input");
@@ -19,15 +20,18 @@ const toggleAction = (pot, id) => {
     case SMOOTH_TOGGLE:
       pot.smooth = !pot.smooth;
       return;
+    case WIREFRAME_TOGGLE:
+      pot.material.wireframe = !pot.material.wireframe;
+      return;
     default: return;
   }
 }
 
-function toggleOff(element) {
+export function toggleOff(element) {
   element.classList.remove("toggled");
 }
 
-function toggleOn(element) {
+export function toggleOn(element) {
   element.classList.add("toggled");
 }
 
@@ -46,6 +50,7 @@ function onToggle(pot, id) {
 
 export function createToggle(pot, id) {
   const toggle = divNode({
+    className: "toggle",
     id,
     children: [
       inputNode({

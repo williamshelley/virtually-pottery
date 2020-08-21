@@ -8,6 +8,7 @@
   gap: 8px;
   text-transform: uppercase;
   font-weight: bold;
+  box-shadow: $BOX-SHADOW;
 
   div {
     padding: 8px;
@@ -16,7 +17,7 @@
   }
 
   .reset-button {
-    background: $SUB-DIV_BG;
+    background: $SPECIAL-BUTTON-BG;
   }
 
   .reset-button:hover {

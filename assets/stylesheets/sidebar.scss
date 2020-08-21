@@ -23,7 +23,7 @@
   background: $DIV-BG;
   border-radius: 8px;
   box-sizing: border-box;
-  box-shadow: 0 1px 2px 2px $BOX-SHADOW;
+  box-shadow: $BOX-SHADOW;
 }
 
 .sidebar-item {

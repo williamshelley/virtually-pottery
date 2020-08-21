@@ -111,8 +111,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./assets/stylesheets/main.scss */ "./assets/stylesheets/main.scss");
 /* harmony import */ var _assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_assets_stylesheets_main_scss__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _src_options_overlay__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./src/options_overlay */ "./src/options_overlay.js");
-/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-
 
 
 
@@ -132,6 +130,8 @@ document.addEventListener("DOMContentLoaded", function () {
     Object(_src_pot_js__WEBPACK_IMPORTED_MODULE_1__["updatePotFromStorage"])(pot, storedLastPot);
   }
 
+  window.isDragging = false;
+  window.isClicking = false;
   scene.add(pot);
   var optionsOverlay = Object(_src_options_overlay__WEBPACK_IMPORTED_MODULE_3__["default"])(pot);
   root.appendChild(optionsOverlay);
@@ -68948,7 +68948,7 @@ var createOptionsOverlay = function createOptionsOverlay(pot) {
 /*!********************!*\
   !*** ./src/pot.js ***!
   \********************/
-/*! exports provided: LAST_POT_STORAGE_KEY, createDefaultPot, createPot, animatePot, smoothWallPoints, pullWallPoints, updatePotFromStorage, getMousePosition, alterWall, onDrag */
+/*! exports provided: LAST_POT_STORAGE_KEY, createDefaultPot, createPot, animatePot, smoothWallPoints, pullWallPoints, updatePotFromStorage, getMousePosition, bundle, alterWall, onDrag */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -68961,14 +68961,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pullWallPoints", function() { return pullWallPoints; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePotFromStorage", function() { return updatePotFromStorage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMousePosition", function() { return getMousePosition; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bundle", function() { return bundle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alterWall", function() { return alterWall; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onDrag", function() { return onDrag; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 /* harmony import */ var _save_status_indicator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./save_status_indicator */ "./src/save_status_indicator.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
-var _this = undefined;
-
 
 
 
@@ -68977,6 +68976,7 @@ var DEFAULT_POT = {
   radius: 5,
   numLevels: 20
 };
+var SAVE_DELAY = 500;
 var createDefaultPot = function createDefaultPot(camera) {
   return createPot(Object(lodash__WEBPACK_IMPORTED_MODULE_2__["merge"])({}, DEFAULT_POT, {
     camera: camera
@@ -69001,8 +69001,7 @@ var createPotPoint = function createPotPoint(_ref) {
     baseRadius = pot.baseRadius;
     radius = pot.radius;
     numLevels = pot.numLevels;
-  } // console.log(baseRadius);
-
+  }
 
   var x = Math.sin(curve * baseRadius) * numLevels + radius;
   x = currentPoint ? currentPoint.x : x;
@@ -69110,6 +69109,7 @@ function createPot(_ref2) {
   pot.saveTimer = null;
   pot.saveWaitTime = 250;
   pot.saved = true;
+  pot.isDragging = false;
   var isMoving = false;
   var keyDown = false;
   var mouseDrag = onDrag({
@@ -69120,8 +69120,20 @@ function createPot(_ref2) {
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
   window.addEventListener("mousemove", mouseDrag, false);
+
+  var _autosave = autosave.bind(this, pot);
+
+  pot.saveTimer = setInterval(_autosave, SAVE_DELAY);
   return pot;
 }
+
+var autosave = function autosave(pot) {
+  if (!pot.saved && !window.isDragging && !window.isClicking) {
+    save(pot);
+    pot.saved = true;
+  }
+};
+
 var animatePot = function animatePot(pot) {
   pot.rotation.y += pot.pullSpeed * 10;
 }; // Wall smoothing based on average of point below and point above mouse pointer
@@ -69172,7 +69184,7 @@ var updatePotFromStorage = function updatePotFromStorage(currentPot, storedPot) 
       deltaPerLevel = storedPot.deltaPerLevel,
       baseRadius = storedPot.baseRadius;
 
-  if (currentPoints && numLevels && deltaPerLevel) {
+  if (currentPoints && numLevels && deltaPerLevel && baseRadius) {
     currentPot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](currentPoints, numLevels);
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
@@ -69191,7 +69203,6 @@ var getMousePosition = function getMousePosition(pot, event) {
   dragPos.copy(camera.position).add(dragVec.multiplyScalar(distance));
   return dragPos;
 };
-
 var bundle = function bundle(pot) {
   var material = pot.material,
       numLevels = pot.numLevels,
@@ -69206,16 +69217,12 @@ var bundle = function bundle(pot) {
     baseRadius: baseRadius
   };
 };
-
 var alterWall = function alterWall(_ref3) {
   var pot = _ref3.pot,
       event = _ref3.event;
-  clearTimeout(pot.saveTimer);
-  pot.saved = false;
-
-  var _timeout = save.bind(_this, pot);
-
-  pot.saveTimer = setTimeout(_timeout, pot.saveWaitTime);
+  // pot.saved = false;
+  // clearTimeout(pot.saveTimer);
+  edit(pot);
   var numLevels = pot.numLevels,
       deltaPerLevel = pot.deltaPerLevel,
       smooth = pot.smooth,
@@ -69260,7 +69267,7 @@ var alterWall = function alterWall(_ref3) {
   }
 
   pot.currentPoints = newPoints;
-  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints, pot.numPointsPerLevel);
+  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints, pot.numPointsPerLevel); // pot.currentPoints = JSON.parse(JSON.stringify(pot.geometry));
 };
 var onDrag = function onDrag(_ref4) {
   var pot = _ref4.pot,
@@ -69268,13 +69275,17 @@ var onDrag = function onDrag(_ref4) {
   return function (event) {
     if (event.type === "mousedown") {
       isMoving = true;
+      window.isClicking = true;
     }
 
     if (event.type === "mouseup") {
       isMoving = false;
+      window.isDragging = false;
+      window.isClicking = false;
     }
 
     if (event.type === "mousemove" && isMoving) {
+      window.isDragging = true;
       Object(_save_status_indicator__WEBPACK_IMPORTED_MODULE_1__["updateSaveStatusIndicator"])(pot);
       alterWall({
         pot: pot,
@@ -69292,6 +69303,11 @@ var save = function save(pot) {
   pot.saved = true;
   Object(_save_status_indicator__WEBPACK_IMPORTED_MODULE_1__["updateSaveStatusIndicator"])(pot);
   localStorage.setItem(LAST_POT_STORAGE_KEY, JSON.stringify(bundle(pot)));
+};
+
+var edit = function edit(pot) {
+  pot.saved = false;
+  Object(_save_status_indicator__WEBPACK_IMPORTED_MODULE_1__["updateSaveStatusIndicator"])(pot);
 };
 
 three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.save = function () {
@@ -69350,6 +69366,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSaveStatusIndicator", function() { return createSaveStatusIndicator; });
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 /* harmony import */ var _pot__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pot */ "./src/pot.js");
+/* harmony import */ var _util_threejs_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/threejs_util */ "./src/util/threejs_util.js");
+
 
 
 var SAVE_STATUS = "save-status";
@@ -69370,9 +69388,11 @@ var createSaveStatusIndicator = function createSaveStatusIndicator(pot) {
       className: "reset-button",
       innerText: "Reset shape!",
       onClick: function onClick() {
-        var newPot = Object(_pot__WEBPACK_IMPORTED_MODULE_1__["createDefaultPot"])(pot.camera);
-        Object(_pot__WEBPACK_IMPORTED_MODULE_1__["updatePotFromStorage"])(pot, newPot);
-        pot.save();
+        var camera = Object(_util_threejs_util__WEBPACK_IMPORTED_MODULE_2__["createCamera"])();
+        var newPot = Object(_pot__WEBPACK_IMPORTED_MODULE_1__["createDefaultPot"])(camera);
+        pot.saved = false;
+        Object(_pot__WEBPACK_IMPORTED_MODULE_1__["updatePotFromStorage"])(pot, Object(_pot__WEBPACK_IMPORTED_MODULE_1__["bundle"])(newPot));
+        updateSaveStatusIndicator(pot);
       }
     })]
   });

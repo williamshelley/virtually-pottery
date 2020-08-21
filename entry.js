@@ -4,11 +4,10 @@ import {
   createRenderer,
   animate,
 } from "./src/util/threejs_util.js";
-import { animatePot, createPot, LAST_POT_STORAGE_KEY, updatePotFromStorage, createDefaultPot } from "./src/pot.js";
+import { animatePot, LAST_POT_STORAGE_KEY, updatePotFromStorage, createDefaultPot } from "./src/pot.js";
 
 import "./assets/stylesheets/main.scss";
 import createOptionsOverlay from "./src/options_overlay";
-import * as THREE from "three";
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.getElementById("root");
@@ -25,6 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
     storedLastPot = JSON.parse(storedLastPot);
     updatePotFromStorage(pot, storedLastPot);
   }
+
+  window.isDragging = false;
+  window.isClicking = false;
 
   scene.add(pot);
 

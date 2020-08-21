@@ -9,6 +9,8 @@ const DEFAULT_POT = {
   numLevels: 20,
 }
 
+const SAVE_DELAY = 500;
+
 export const createDefaultPot = (camera) => {
   return createPot(merge({}, DEFAULT_POT, { camera }));
 }
@@ -31,7 +33,6 @@ const createPotPoint = ({
     numLevels = pot.numLevels;
   }
 
-  // console.log(baseRadius);
   let x = Math.sin(curve * baseRadius) * numLevels + radius;
   x = currentPoint ? currentPoint.x : x;
   let y = (level - radius) - (numLevels / yOffsetDivisor);
@@ -113,22 +114,33 @@ export function createPot({
   pot.saveTimer = null;
   pot.saveWaitTime = 250;
   pot.saved = true;
+  pot.isDragging = false;
 
   let isMoving = false;
   let keyDown = false;
   const mouseDrag = onDrag({ pot, keyDown, isMoving });
 
+
   window.addEventListener("mousedown", mouseDrag, false);
   window.addEventListener("mouseup", mouseDrag, false);
   window.addEventListener("mousemove", mouseDrag, false);
 
+  const _autosave = autosave.bind(this, pot);
+  pot.saveTimer = setInterval(_autosave, SAVE_DELAY);
+
   return pot;
+}
+
+const autosave = (pot) => {
+  if (!pot.saved  && !window.isDragging && !window.isClicking) {
+    save(pot);
+    pot.saved = true;
+  }
 }
 
 export const animatePot = (pot) => {
   pot.rotation.y += pot.pullSpeed * 10;
 }
-
 
 // Wall smoothing based on average of point below and point above mouse pointer
 export const smoothWallPoints = (i, pot) => {
@@ -167,7 +179,8 @@ export const pullWallPoints = (i, pot) => {
 
 export const updatePotFromStorage = (currentPot, storedPot) => {
   const { currentPoints, numLevels, deltaPerLevel, baseRadius } = storedPot;
-  if (currentPoints && numLevels && deltaPerLevel) {
+
+  if (currentPoints && numLevels && deltaPerLevel && baseRadius) {
     currentPot.geometry = new THREE.LatheGeometry(currentPoints, numLevels);
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
@@ -193,7 +206,7 @@ export const getMousePosition = (pot, event) => {
   return dragPos;
 }
 
-const bundle = pot => {
+export const bundle = pot => {
   const { material, numLevels, currentPoints, deltaPerLevel, baseRadius } = pot;
 
   return {
@@ -202,10 +215,9 @@ const bundle = pot => {
 }
 
 export const alterWall = ({ pot, event }) => {
-  clearTimeout(pot.saveTimer);
-  pot.saved = false;
-  const _timeout = save.bind(this, pot);
-  pot.saveTimer = setTimeout(_timeout, pot.saveWaitTime);
+  // pot.saved = false;
+  // clearTimeout(pot.saveTimer);
+  edit(pot);
 
   let { numLevels, deltaPerLevel, smooth, camera } = pot;
   let pointsToModify = new Set();
@@ -233,15 +245,24 @@ export const alterWall = ({ pot, event }) => {
 
   pot.currentPoints = newPoints;
   pot.geometry = new THREE.LatheGeometry(newPoints, pot.numPointsPerLevel);
+  // pot.currentPoints = JSON.parse(JSON.stringify(pot.geometry));
 }
 
 
 
 export const onDrag = ({ pot, isMoving }) => {
   return event => {
-    if (event.type === "mousedown") { isMoving = true; }
-    if (event.type === "mouseup") { isMoving = false; }
+    if (event.type === "mousedown") { 
+      isMoving = true; 
+      window.isClicking = true;
+    }
+    if (event.type === "mouseup") { 
+      isMoving = false; 
+      window.isDragging = false;
+      window.isClicking = false;
+    }
     if (event.type === "mousemove" && isMoving) {
+      window.isDragging = true;
       updateSaveStatusIndicator(pot)
       alterWall({ pot, event });
     }
@@ -256,6 +277,11 @@ const save = (pot) => {
   pot.saved = true;
   updateSaveStatusIndicator(pot);
   localStorage.setItem(LAST_POT_STORAGE_KEY, JSON.stringify(bundle(pot)));
+}
+
+const edit = (pot) => {
+  pot.saved = false;
+  updateSaveStatusIndicator(pot);
 }
 
 THREE.Mesh.prototype.save = function() {

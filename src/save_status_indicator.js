@@ -1,7 +1,8 @@
 import {
   divNode, buttonNode
 } from "./util/html_util"
-import { createDefaultPot, updatePotFromStorage } from "./pot";
+import { createDefaultPot, updatePotFromStorage, bundle } from "./pot";
+import { createCamera } from "./util/threejs_util";
 
 const SAVE_STATUS = "save-status";
 const SAVE_STATUS_INDICATOR = "save-status-indicator";
@@ -25,9 +26,11 @@ export const createSaveStatusIndicator = pot => {
         className: "reset-button",
         innerText: "Reset shape!",
         onClick: () => {
-          const newPot = createDefaultPot(pot.camera);
-          updatePotFromStorage(pot, newPot);
-          pot.save();
+          let camera = createCamera();
+          let newPot = createDefaultPot(camera);
+          pot.saved = false;
+          updatePotFromStorage(pot, bundle(newPot));
+          updateSaveStatusIndicator(pot);
         }
       }),
     ]

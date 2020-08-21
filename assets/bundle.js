@@ -68818,15 +68818,7 @@ function createDimensionSlider(pot, id) {
       }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_1__["pNode"])({
         id: id + "-value",
         innerText: currentValue
-      }) // reset button (only for sliders)
-      // buttonNode({
-      //   innerText: "Reset",
-      //   onClick: (e) => {
-      //     onInput(resetValue)(e);
-      //     pot.updateGeometry();
-      //   }
-      // })
-      ]
+      })]
     })]
   });
 }
@@ -69177,12 +69169,14 @@ var pullWallPoints = function pullWallPoints(i, pot) {
 var updatePotFromStorage = function updatePotFromStorage(currentPot, storedPot) {
   var currentPoints = storedPot.currentPoints,
       numLevels = storedPot.numLevels,
-      deltaPerLevel = storedPot.deltaPerLevel;
+      deltaPerLevel = storedPot.deltaPerLevel,
+      baseRadius = storedPot.baseRadius;
 
   if (currentPoints && numLevels && deltaPerLevel) {
     currentPot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](currentPoints, numLevels);
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
+    currentPot.baseRadius = baseRadius;
   }
 }; // returns current mousePosition
 
@@ -69202,12 +69196,14 @@ var bundle = function bundle(pot) {
   var material = pot.material,
       numLevels = pot.numLevels,
       currentPoints = pot.currentPoints,
-      deltaPerLevel = pot.deltaPerLevel;
+      deltaPerLevel = pot.deltaPerLevel,
+      baseRadius = pot.baseRadius;
   return {
     material: material,
     numLevels: numLevels,
     currentPoints: currentPoints,
-    deltaPerLevel: deltaPerLevel
+    deltaPerLevel: deltaPerLevel,
+    baseRadius: baseRadius
   };
 };
 

@@ -166,11 +166,12 @@ export const pullWallPoints = (i, pot) => {
 }
 
 export const updatePotFromStorage = (currentPot, storedPot) => {
-  const { currentPoints, numLevels, deltaPerLevel } = storedPot;
+  const { currentPoints, numLevels, deltaPerLevel, baseRadius } = storedPot;
   if (currentPoints && numLevels && deltaPerLevel) {
     currentPot.geometry = new THREE.LatheGeometry(currentPoints, numLevels);
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
+    currentPot.baseRadius = baseRadius;
   }
 }
 
@@ -193,10 +194,10 @@ export const getMousePosition = (pot, event) => {
 }
 
 const bundle = pot => {
-  const { material, numLevels, currentPoints, deltaPerLevel } = pot;
+  const { material, numLevels, currentPoints, deltaPerLevel, baseRadius } = pot;
 
   return {
-    material, numLevels, currentPoints, deltaPerLevel
+    material, numLevels, currentPoints, deltaPerLevel, baseRadius
   }
 }
 

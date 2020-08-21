@@ -81,14 +81,6 @@ export function createDimensionSlider(pot, id) {
             id: id + "-value",
             innerText: currentValue
           }),
-          // reset button (only for sliders)
-          // buttonNode({
-          //   innerText: "Reset",
-          //   onClick: (e) => {
-          //     onInput(resetValue)(e);
-          //     pot.updateGeometry();
-          //   }
-          // })
         ]
       })
     ]

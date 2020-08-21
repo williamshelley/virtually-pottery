@@ -185,6 +185,7 @@ export const updatePotFromStorage = (currentPot, storedPot) => {
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
     currentPot.baseRadius = baseRadius;
+    currentPot.currentPoints = currentPoints;
   }
 }
 
@@ -215,8 +216,7 @@ export const bundle = pot => {
 }
 
 export const alterWall = ({ pot, event }) => {
-  // pot.saved = false;
-  // clearTimeout(pot.saveTimer);
+  console.log("edit pot")
   edit(pot);
 
   let { numLevels, deltaPerLevel, smooth, camera } = pot;

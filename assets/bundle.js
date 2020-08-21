@@ -69189,6 +69189,7 @@ var updatePotFromStorage = function updatePotFromStorage(currentPot, storedPot) 
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
     currentPot.baseRadius = baseRadius;
+    currentPot.currentPoints = currentPoints;
   }
 }; // returns current mousePosition
 
@@ -69220,8 +69221,7 @@ var bundle = function bundle(pot) {
 var alterWall = function alterWall(_ref3) {
   var pot = _ref3.pot,
       event = _ref3.event;
-  // pot.saved = false;
-  // clearTimeout(pot.saveTimer);
+  console.log("edit pot");
   edit(pot);
   var numLevels = pot.numLevels,
       deltaPerLevel = pot.deltaPerLevel,

@@ -1,4 +1,17 @@
 import * as THREE from "three";
+import { updateSaveStatusIndicator } from "./save_status_indicator";
+import { merge } from "lodash";
+
+export const LAST_POT_STORAGE_KEY = "LAST_POT_STORAGE_KEY";
+
+const DEFAULT_POT = {
+  radius: 5,
+  numLevels: 20,
+}
+
+export const createDefaultPot = (camera) => {
+  return createPot(merge({}, DEFAULT_POT, { camera }));
+}
 
 // creates a vector2 point and passes it to callback
 const createPotPoint = ({
@@ -9,7 +22,8 @@ const createPotPoint = ({
   callback,
   baseRadius = 0.2,
   curve = 1,
-  yOffsetDivisor = 2
+  yOffsetDivisor = 2,
+  currentPoint,
 }) => {
   if (pot) {
     baseRadius = pot.baseRadius;
@@ -19,9 +33,27 @@ const createPotPoint = ({
 
   // console.log(baseRadius);
   let x = Math.sin(curve * baseRadius) * numLevels + radius;
+  x = currentPoint ? currentPoint.x : x;
   let y = (level - radius) - (numLevels / yOffsetDivisor);
   let point = new THREE.Vector2(x, y);
   callback(point);
+}
+
+const updatePotGeometry = pot => {
+  return () => {
+    let points = [];
+    const callback = point => points.push(point);
+    for (let i = 0; i < pot.numLevels; i++) {
+      if (pot.currentPoints[i]) {
+        const currentPoint  = pot.currentPoints[i];
+        createPotPoint({ pot, level: i, callback, currentPoint });
+      } else {
+        createPotPoint({ pot, level: i, callback });
+      }
+    }
+
+    pot.geometry = new THREE.LatheGeometry(points, pot.numPointsPerLevel);
+  }
 }
 
 // initialization returns a mesh object with LatheGeometry and texture
@@ -63,8 +95,8 @@ export function createPot({
     map: loader.load("../assets/images/earthenware.jpg"),
   });
   let pot = new THREE.Mesh(potGeo, potMat);
-  pot.material.side = THREE.DoubleSide;
 
+  pot.material.side = THREE.DoubleSide;
   pot.baseRadius = baseRadius;
   pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
@@ -76,6 +108,11 @@ export function createPot({
   pot.minWidth = minWidth;
   pot.pullDirection = -1;
   pot.smooth = false;
+  pot.updateGeometry = updatePotGeometry(pot);
+  pot.currentPoints = points;
+  pot.saveTimer = null;
+  pot.saveWaitTime = 1000;
+  pot.saved = true;
 
   let isMoving = false;
   let keyDown = false;
@@ -128,6 +165,15 @@ export const pullWallPoints = (i, pot) => {
   }
 }
 
+export const updatePotFromStorage = (currentPot, storedPot) => {
+  const { currentPoints, numLevels, deltaPerLevel } = storedPot;
+  if (currentPoints && numLevels && deltaPerLevel) {
+    currentPot.geometry = new THREE.LatheGeometry(currentPoints, numLevels);
+    currentPot.deltaPerLevel = deltaPerLevel;
+    currentPot.numLevels = numLevels;
+  }
+}
+
 
 // returns current mousePosition
 export const getMousePosition = (pot, event) => {
@@ -146,12 +192,24 @@ export const getMousePosition = (pot, event) => {
   return dragPos;
 }
 
+const bundle = pot => {
+  const { material, numLevels, currentPoints, deltaPerLevel } = pot;
+
+  return {
+    material, numLevels, currentPoints, deltaPerLevel
+  }
+}
+
 export const alterWall = ({ pot, event }) => {
+  clearTimeout(pot.saveTimer);
+  pot.saved = false;
+  const _timeout = save.bind(this, pot);
+  pot.saveTimer = setTimeout(_timeout, pot.saveWaitTime);
+
   let { numLevels, deltaPerLevel, smooth, camera } = pot;
   let pointsToModify = new Set();
   const mousePos = getMousePosition(pot, event, camera);
 
-  pot.geometry.verticesNeedUpdate = true;
   for (let i = 0; i < pot.geometry.vertices.length; i++) {
     if (mousePos.y <= pot.geometry.vertices[i].y + 1.5 && mousePos.y >= pot.geometry.vertices[i].y - 1.5) {
       pointsToModify.add(i);
@@ -161,7 +219,7 @@ export const alterWall = ({ pot, event }) => {
   let newPoints = [];
   const callback = point => newPoints.push(point);
 
-  for (var i = 0; i < numLevels; i++) {
+  for (let i = 0; i < numLevels; i++) {
     if (pointsToModify.has(i)) {
       if (!smooth) { pullWallPoints(i, pot); } 
       else { smoothWallPoints(i, pot); }
@@ -172,6 +230,7 @@ export const alterWall = ({ pot, event }) => {
     }
   }
 
+  pot.currentPoints = newPoints;
   pot.geometry = new THREE.LatheGeometry(newPoints, pot.numPointsPerLevel);
 }
 
@@ -182,6 +241,7 @@ export const onDrag = ({ pot, isMoving }) => {
     if (event.type === "mousedown") { isMoving = true; }
     if (event.type === "mouseup") { isMoving = false; }
     if (event.type === "mousemove" && isMoving) {
+      updateSaveStatusIndicator(pot)
       alterWall({ pot, event });
     }
   }
@@ -189,6 +249,16 @@ export const onDrag = ({ pot, isMoving }) => {
 
 Number.prototype.between = (num, min, max) => {
   return num >= min && num <= max;
+}
+
+const save = (pot) => {
+  pot.saved = true;
+  updateSaveStatusIndicator(pot);
+  localStorage.setItem(LAST_POT_STORAGE_KEY, JSON.stringify(bundle(pot)));
+}
+
+THREE.Mesh.prototype.save = function() {
+  save(this);
 }
 
 THREE.Mesh.prototype.changeMaterial = function (newMaterialUrl) {

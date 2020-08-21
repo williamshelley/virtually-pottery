@@ -12,7 +12,7 @@
   box-sizing: border-box;
   align-items: center;
   justify-content: flex-start;
-  background-color: #45A29E;
+  background: linear-gradient(-45deg, #20948B, #6AB187);
   gap: 8px;
   right: 0;
   top: 0;
@@ -34,7 +34,7 @@
 
 .color-palette-option:hover {
   cursor: pointer;
-  background-color: rgba(80, 100, 150, 0.5);
+  background: rgba(80, 100, 150, 0.5);
 }
 
 .color-palette-option > p {
@@ -52,7 +52,7 @@
   display: flex;
   max-width: 500px;
   max-height: fit-content;
-  background: #45A29E;
+  background: linear-gradient(-45deg, #20948B, #6AB187);
   z-index: 100;
   padding: 8px;
   color: white;
@@ -85,7 +85,7 @@
   z-index: 100;
   padding: 12px;
   gap: 8px;
-  background-color: #45A29E;
+  background: linear-gradient(-45deg, #20948B, #6AB187);
   border-radius: 8px;
   box-sizing: border-box;
   box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.3);
@@ -95,14 +95,14 @@
   width: 100%;
   height: fit-content;
   padding: 16px;
-  background-color: #20948B;
+  background: #20948B;
   box-sizing: border-box;
   border-radius: 8px;
 }
 
 .sidebar-item:hover {
   cursor: pointer;
-  background-color: rgba(80, 100, 150, 0.5);
+  background: rgba(80, 100, 150, 0.5);
 }
 
 .toggle-container {
@@ -111,7 +111,7 @@
   justify-content: space-between;
   gap: 4px;
   padding: 8px;
-  background-color: #1F2833;
+  background: linear-gradient(45deg, #1F2833, #DE7A22);
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
@@ -129,7 +129,7 @@
   min-height: 40px;
   min-width: 40px;
   appearance: none;
-  background-color: rgba(80, 100, 150, 0.5);
+  background: rgba(80, 100, 150, 0.5);
   border-radius: 50%;
   margin: 0;
   outline: none;
@@ -160,7 +160,7 @@ input[type=checkbox]:hover {
 }
 
 #info {
-  background-color: #45A29E;
+  background: linear-gradient(-45deg, #20948B, #6AB187);
   height: fit-content;
   min-width: fit-content;
 }
@@ -198,8 +198,41 @@ input[type=checkbox]:hover {
 }
 
 #instructions {
-  background-color: #45A29E;
+  background: linear-gradient(-45deg, #20948B, #6AB187);
   padding: 8px;
+  flex-direction: column;
+  gap: 8px;
+  width: 300px;
+  box-sizing: border-box;
+}
+#instructions p {
+  background: linear-gradient(45deg, #1F2833, #DE7A22);
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.save-status {
+  background: linear-gradient(-45deg, #20948B, #6AB187);
+  padding: 8px;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: 8px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.save-status div {
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+}
+.save-status .reset-button {
+  background: linear-gradient(45deg, #1F2833, #DE7A22);
+}
+.save-status .reset-button:hover {
+  background: rgba(80, 100, 150, 0.5);
+  cursor: pointer;
 }
 
 * {

@@ -1,8 +1,16 @@
 import { toggleRootPanel } from "./util/panel_util";
-import { inputNode, divNode, pNode, h3Node } from "./util/html_util";
+import { inputNode, divNode, pNode, h3Node, buttonNode } from "./util/html_util";
 
 export const HEIGHT_SLIDER = "height-slider";
 export const WIDTH_SLIDER = "width-slider";
+
+const changePotField = (pot, id, field, newValue) => {
+  const input = document.getElementById(id + "-input");
+  const displayValue = document.getElementById(id + "-value");
+  const value = newValue ? newValue : input.value;
+  pot[field] = value;
+
+}
 
 const sliderInfo = (pot, id) => {
 
@@ -13,33 +21,44 @@ const sliderInfo = (pot, id) => {
         min: 5, 
         max: 40,
         value: pot.numLevels,
-        onInput: function() {
-          const input = document.getElementById(id + "-input");
-          const displayValue = document.getElementById(id + "-value");
-          pot.numLevels = parseInt(input.value);
-          displayValue.innerHTML = parseInt(input.value);
-        }
+        onInput: function(value) {
+          return e => {
+            const input = document.getElementById(id + "-input");
+            const displayValue = document.getElementById(id + "-value");
+            const newValue = value ? value : input.value;
+            pot.numLevels = parseInt(newValue);
+            input.value = newValue;
+            displayValue.innerHTML = parseInt(pot.numLevels);
+          }
+        },
+        resetValue: 20,
+        currentValue: pot.numLevels,
       };
     case WIDTH_SLIDER:
-      const upperRange = 100;
+      const upperRange = 10;
       return {
         innerText: "Change width using slider",
         min: 1,
         max: upperRange,
-        value: pot.baseRadius,
-        onInput: function() {
-          const input = document.getElementById(id + "-input");
-          const displayValue = document.getElementById(id + "-value");
-          pot.baseRadius = parseFloat(input.value) / upperRange;
-          displayValue.innerHTML = parseFloat(pot.baseRadius).toFixed(1);
-        }
+        value: pot.baseRadius * upperRange,
+        onInput: function(value) {
+          return e => {
+            const input = document.getElementById(id + "-input");
+            const displayValue = document.getElementById(id + "-value");
+            const newValue = value ? value * upperRange : input.value / upperRange;
+            pot.baseRadius = parseFloat(newValue);
+            displayValue.innerHTML = parseFloat(pot.baseRadius).toFixed(1);
+          }
+        },
+        resetValue: 0.2,
+        currentValue: pot.baseRadius
       };
     default: return undefined;
   }
 }
 
 export function createDimensionSlider(pot, id) {
-  const { innerText, value, min, max, onInput } = sliderInfo(pot, id);
+  const { innerText, value, min, max, onInput, resetValue, currentValue } = sliderInfo(pot, id);
 
   return divNode({
     id,
@@ -56,12 +75,20 @@ export function createDimensionSlider(pot, id) {
             min,
             max,
             value,
-            onInput,
+            onInput: onInput(),
           }),
           pNode({
             id: id + "-value",
-            innerText: value
-          })
+            innerText: currentValue
+          }),
+          // reset button (only for sliders)
+          // buttonNode({
+          //   innerText: "Reset",
+          //   onClick: (e) => {
+          //     onInput(resetValue)(e);
+          //     pot.updateGeometry();
+          //   }
+          // })
         ]
       })
     ]
@@ -75,41 +102,6 @@ export function createHeightSlider(pot) {
 export function createWidthSlider(pot) {
   return createDimensionSlider(pot, WIDTH_SLIDER);
 }
-
-// export function createHeightSlider(pot) {
-//   function _onInput() {
-//     const input = document.getElementById("height-slider-input");
-//     const displayValue = document.getElementById("height-slider-value");
-//     pot.numLevels = parseInt(input.value);
-//     displayValue.innerHTML = parseInt(input.value);
-//   }
-
-//   return divNode({
-//     id: "height-slider",
-//     children: [
-//       h3Node({
-//         innerText: "Change height using slider"
-//       }),
-//       divNode({
-//         children: [
-//           inputNode({
-//             id: "height-slider-input",
-//             type: "range",
-//             min: 5,
-//             max: 40,
-//             value: pot.numLevels,
-//             onInput: _onInput,
-//           }),
-//           pNode({
-//             id: "height-slider-value",
-//             innerText: pot.numLevels
-//           })
-//         ]
-//       })
-//     ]
-//   });
-// }
-
 
 export function toggleHeightSlider(pot) {
   return event => {

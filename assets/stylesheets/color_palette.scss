@@ -14,7 +14,7 @@
   box-sizing: border-box;
   align-items: center;
   justify-content: flex-start;
-  background-color: $DIV-BG;
+  background: $DIV-BG;
   gap: 8px;
   right: 0;
   top: 0;
@@ -36,7 +36,7 @@
 }
 .color-palette-option:hover {
   cursor: pointer;
-  background-color: $ITEM-HOVER;
+  background: $ITEM-HOVER;
 }
 .color-palette-option > p {
   margin: 0;

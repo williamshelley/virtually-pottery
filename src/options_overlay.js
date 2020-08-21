@@ -4,6 +4,7 @@ import { createColorPalette } from "./color_palette";
 import { createHeightSlider, createWidthSlider } from "./dimension_slider";
 import { createInfo } from "./info";
 import { createInstructions } from "./instructions";
+import { createSaveStatusIndicator } from "./save_status_indicator";
 
 const createOptionsOverlay = (pot) => {
   const sidebar = createSidebar(pot);
@@ -15,6 +16,7 @@ const createOptionsOverlay = (pot) => {
 
   const info = createInfo();
   const instructions = createInstructions();
+  const saveStatusIndicator = createSaveStatusIndicator(pot);
 
   return divNode({
     className: "options-overlay",
@@ -26,7 +28,8 @@ const createOptionsOverlay = (pot) => {
               className: "left",
               children: [
                 sidebar,
-                instructions
+                instructions,
+                saveStatusIndicator,
               ]
             }),
             info,

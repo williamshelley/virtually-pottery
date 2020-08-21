@@ -12,8 +12,8 @@ $TEAL: #45A29E;
 
 // $MAIN-BG: $DARK;
 $MAIN-BG: $LIGHT-GRAY;
-$DIV-BG: $TEAL;
-$SUB-DIV-BG: $DARK_BLUE;
+$DIV-BG: linear-gradient(-45deg, $SEA, $LAGOON);
+$SUB-DIV-BG: linear-gradient(45deg, $DARK_BLUE, $BURNT_ORANGE);
 $TEXT-COLOR: white;
 $SUB-DIV-ITEM-BG: $CYAN;
 $BOX-SHADOW: rgba(0,0,0,0.3);

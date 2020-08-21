@@ -4,11 +4,10 @@ import {
   createRenderer,
   animate,
 } from "./src/util/threejs_util.js";
-import { animatePot, createPot } from "./src/pot.js";
+import { animatePot, createPot, LAST_POT_STORAGE_KEY, updatePotFromStorage, createDefaultPot } from "./src/pot.js";
 
 import "./assets/stylesheets/main.scss";
 import createOptionsOverlay from "./src/options_overlay";
-
 import * as THREE from "three";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -19,7 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let renderer = createRenderer();
   root.appendChild(renderer.domElement);
 
-  let pot = createPot({ radius: 5, numLevels: 20, camera });
+  // let pot = createPot({ radius: 5, numLevels: 20, camera });
+  let pot = createDefaultPot(camera);
+  let storedLastPot = localStorage.getItem(LAST_POT_STORAGE_KEY);
+  if (storedLastPot) {
+    storedLastPot = JSON.parse(storedLastPot);
+    updatePotFromStorage(pot, storedLastPot);
+  }
+
   scene.add(pot);
 
   const optionsOverlay = createOptionsOverlay(pot);

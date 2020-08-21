@@ -9,6 +9,7 @@ export const createNode = ({
   min,
   max,
   onInput,
+  onClick,
   children = [],
 }) => {
   const childNode = document.createElement(tag);
@@ -21,6 +22,7 @@ export const createNode = ({
   if (min) { childNode.min = min; }
   if (max) { childNode.max = max; }
   if (onInput) { childNode.oninput = onInput; }
+  if (onClick) { childNode.addEventListener("click", onClick); }
 
   if (tag !== "input") {
     children.forEach(child => childNode.appendChild(child));
@@ -39,6 +41,13 @@ export const divNode = (props) => {
 export const spanNode = (props) => {
   return createNode({
     tag: "span",
+    ...props
+  });
+}
+
+export const buttonNode = props => {
+  return createNode({
+    tag: "button",
     ...props
   });
 }

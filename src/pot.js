@@ -93,10 +93,10 @@ export function createPot({
   let potGeo = new THREE.LatheGeometry(points, numPointsPerLevel);
   let potMat = new THREE.MeshBasicMaterial({
     map: loader.load("../assets/images/earthenware.jpg"),
+    side: THREE.DoubleSide
   });
   let pot = new THREE.Mesh(potGeo, potMat);
 
-  pot.material.side = THREE.DoubleSide;
   pot.baseRadius = baseRadius;
   pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
@@ -111,7 +111,7 @@ export function createPot({
   pot.updateGeometry = updatePotGeometry(pot);
   pot.currentPoints = points;
   pot.saveTimer = null;
-  pot.saveWaitTime = 1000;
+  pot.saveWaitTime = 250;
   pot.saved = true;
 
   let isMoving = false;
@@ -264,7 +264,8 @@ THREE.Mesh.prototype.save = function() {
 THREE.Mesh.prototype.changeMaterial = function (newMaterialUrl) {
   const loader = new THREE.TextureLoader();
   const newMaterial = new THREE.MeshBasicMaterial({
-    map: loader.load(newMaterialUrl)
+    map: loader.load(newMaterialUrl),
+    side: THREE.DoubleSide
   });
 
   this.material = newMaterial;

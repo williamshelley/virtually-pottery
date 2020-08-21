@@ -69096,10 +69096,10 @@ function createPot(_ref2) {
 
   var potGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points, numPointsPerLevel);
   var potMat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-    map: loader.load("../assets/images/earthenware.jpg")
+    map: loader.load("../assets/images/earthenware.jpg"),
+    side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
   });
   var pot = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](potGeo, potMat);
-  pot.material.side = three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"];
   pot.baseRadius = baseRadius;
   pot.numPointsPerLevel = numPointsPerLevel;
   pot.camera = camera;
@@ -69116,7 +69116,7 @@ function createPot(_ref2) {
   pot.updateGeometry = updatePotGeometry(pot);
   pot.currentPoints = points;
   pot.saveTimer = null;
-  pot.saveWaitTime = 1000;
+  pot.saveWaitTime = 250;
   pot.saved = true;
   var isMoving = false;
   var keyDown = false;
@@ -69305,7 +69305,8 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.save = function () {
 three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (newMaterialUrl) {
   var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
   var newMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-    map: loader.load(newMaterialUrl)
+    map: loader.load(newMaterialUrl),
+    side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
   });
   this.material = newMaterial;
 };

@@ -11,7 +11,7 @@ const DEFAULT_POT = {
 
 const SAVE_DELAY = 500;
 
-const EARTHENWARE = "../assets/images/earthenware.jpg";
+const EARTHENWARE = "../assets/images/earthenware.png";
 
 export const createDefaultPot = (camera) => {
   return createPot(merge({}, DEFAULT_POT, { camera }));
@@ -247,7 +247,6 @@ export const alterWall = ({ pot, event }) => {
 
   pot.currentPoints = newPoints;
   pot.geometry = new THREE.LatheGeometry(newPoints, pot.numPointsPerLevel);
-  // pot.currentPoints = JSON.parse(JSON.stringify(pot.geometry));
 }
 
 

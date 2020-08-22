@@ -68987,7 +68987,7 @@ var DEFAULT_POT = {
   numLevels: 20
 };
 var SAVE_DELAY = 500;
-var EARTHENWARE = "../assets/images/earthenware.jpg";
+var EARTHENWARE = "../assets/images/earthenware.png";
 var createDefaultPot = function createDefaultPot(camera) {
   return createPot(Object(lodash__WEBPACK_IMPORTED_MODULE_2__["merge"])({}, DEFAULT_POT, {
     camera: camera
@@ -69280,7 +69280,7 @@ var alterWall = function alterWall(_ref3) {
   }
 
   pot.currentPoints = newPoints;
-  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints, pot.numPointsPerLevel); // pot.currentPoints = JSON.parse(JSON.stringify(pot.geometry));
+  pot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](newPoints, pot.numPointsPerLevel);
 };
 var onDrag = function onDrag(_ref4) {
   var pot = _ref4.pot,

@@ -1,6 +1,6 @@
 # Virtually Pottery
 
-[Live Site!](https://williamshelley.github.io/)
+[Live Site!](https://williamshelley.github.io/virtually-pottery)
 
 This is a site for artists to virtually create masterpieces.
 

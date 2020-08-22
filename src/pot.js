@@ -11,6 +11,8 @@ const DEFAULT_POT = {
 
 const SAVE_DELAY = 500;
 
+const EARTHENWARE = "../assets/images/earthenware.jpg";
+
 export const createDefaultPot = (camera) => {
   return createPot(merge({}, DEFAULT_POT, { camera }));
 }
@@ -93,7 +95,7 @@ export function createPot({
 
   let potGeo = new THREE.LatheGeometry(points, numPointsPerLevel);
   let potMat = new THREE.MeshBasicMaterial({
-    map: loader.load("../assets/images/earthenware.jpg"),
+    map: loader.load(EARTHENWARE),
     side: THREE.DoubleSide
   });
   let pot = new THREE.Mesh(potGeo, potMat);
@@ -178,14 +180,15 @@ export const pullWallPoints = (i, pot) => {
 }
 
 export const updatePotFromStorage = (currentPot, storedPot) => {
-  const { currentPoints, numLevels, deltaPerLevel, baseRadius } = storedPot;
+  const { materialUrl, currentPoints, numLevels, deltaPerLevel, baseRadius } = storedPot;
 
-  if (currentPoints && numLevels && deltaPerLevel && baseRadius) {
+  if (currentPoints && numLevels && deltaPerLevel && baseRadius && materialUrl) {
     currentPot.geometry = new THREE.LatheGeometry(currentPoints, numLevels);
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
     currentPot.baseRadius = baseRadius;
     currentPot.currentPoints = currentPoints;
+    currentPot.changeMaterial(materialUrl);
   }
 }
 
@@ -209,14 +212,13 @@ export const getMousePosition = (pot, event) => {
 
 export const bundle = pot => {
   const { material, numLevels, currentPoints, deltaPerLevel, baseRadius } = pot;
-
+  const materialUrl = material.map.image ? material.map.image.src : EARTHENWARE ;
   return {
-    material, numLevels, currentPoints, deltaPerLevel, baseRadius
+    materialUrl, numLevels, currentPoints, deltaPerLevel, baseRadius
   }
 }
 
 export const alterWall = ({ pot, event }) => {
-  console.log("edit pot")
   edit(pot);
 
   let { numLevels, deltaPerLevel, smooth, camera } = pot;
@@ -296,4 +298,5 @@ THREE.Mesh.prototype.changeMaterial = function (newMaterialUrl) {
   });
 
   this.material = newMaterial;
+  this.saved = false;
 }

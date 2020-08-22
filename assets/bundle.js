@@ -68720,13 +68720,14 @@ function toggleColorPalette(pot) {
 /*!*********************************!*\
   !*** ./src/dimension_slider.js ***!
   \*********************************/
-/*! exports provided: HEIGHT_SLIDER, WIDTH_SLIDER, createDimensionSlider, createHeightSlider, createWidthSlider, toggleHeightSlider */
+/*! exports provided: HEIGHT_SLIDER, WIDTH_SLIDER, resetSliders, createDimensionSlider, createHeightSlider, createWidthSlider, toggleHeightSlider */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HEIGHT_SLIDER", function() { return HEIGHT_SLIDER; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WIDTH_SLIDER", function() { return WIDTH_SLIDER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resetSliders", function() { return resetSliders; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDimensionSlider", function() { return createDimensionSlider; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHeightSlider", function() { return createHeightSlider; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWidthSlider", function() { return createWidthSlider; });
@@ -68745,6 +68746,14 @@ var changePotField = function changePotField(pot, id, field, newValue) {
   pot[field] = value;
 };
 
+var resetSliders = function resetSliders(pot) {
+  var heightInfo = sliderInfo(pot, HEIGHT_SLIDER);
+  var widthInfo = sliderInfo(pot, WIDTH_SLIDER);
+  heightInfo.onInput(heightInfo.resetValue)();
+  console.log(widthInfo.resetValue);
+  widthInfo.onInput(widthInfo.resetValue)();
+};
+
 var sliderInfo = function sliderInfo(pot, id) {
   switch (id) {
     case HEIGHT_SLIDER:
@@ -68759,7 +68768,7 @@ var sliderInfo = function sliderInfo(pot, id) {
             var displayValue = document.getElementById(id + "-value");
             var newValue = value ? value : input.value;
             pot.numLevels = parseInt(newValue);
-            input.value = newValue;
+            input.value = value ? value : input.value;
             displayValue.innerHTML = parseInt(pot.numLevels);
           };
         },
@@ -68778,7 +68787,8 @@ var sliderInfo = function sliderInfo(pot, id) {
           return function (e) {
             var input = document.getElementById(id + "-input");
             var displayValue = document.getElementById(id + "-value");
-            var newValue = value ? value * upperRange : input.value / upperRange;
+            var newValue = value ? value : input.value / upperRange;
+            input.value = value ? value * upperRange : input.value;
             pot.baseRadius = parseFloat(newValue);
             displayValue.innerHTML = parseFloat(pot.baseRadius).toFixed(1);
           };
@@ -68977,6 +68987,7 @@ var DEFAULT_POT = {
   numLevels: 20
 };
 var SAVE_DELAY = 500;
+var EARTHENWARE = "../assets/images/earthenware.jpg";
 var createDefaultPot = function createDefaultPot(camera) {
   return createPot(Object(lodash__WEBPACK_IMPORTED_MODULE_2__["merge"])({}, DEFAULT_POT, {
     camera: camera
@@ -69087,7 +69098,7 @@ function createPot(_ref2) {
 
   var potGeo = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points, numPointsPerLevel);
   var potMat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-    map: loader.load("../assets/images/earthenware.jpg"),
+    map: loader.load(EARTHENWARE),
     side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
   });
   var pot = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](potGeo, potMat);
@@ -69179,17 +69190,19 @@ var pullWallPoints = function pullWallPoints(i, pot) {
   }
 };
 var updatePotFromStorage = function updatePotFromStorage(currentPot, storedPot) {
-  var currentPoints = storedPot.currentPoints,
+  var materialUrl = storedPot.materialUrl,
+      currentPoints = storedPot.currentPoints,
       numLevels = storedPot.numLevels,
       deltaPerLevel = storedPot.deltaPerLevel,
       baseRadius = storedPot.baseRadius;
 
-  if (currentPoints && numLevels && deltaPerLevel && baseRadius) {
+  if (currentPoints && numLevels && deltaPerLevel && baseRadius && materialUrl) {
     currentPot.geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](currentPoints, numLevels);
     currentPot.deltaPerLevel = deltaPerLevel;
     currentPot.numLevels = numLevels;
     currentPot.baseRadius = baseRadius;
     currentPot.currentPoints = currentPoints;
+    currentPot.changeMaterial(materialUrl);
   }
 }; // returns current mousePosition
 
@@ -69210,8 +69223,9 @@ var bundle = function bundle(pot) {
       currentPoints = pot.currentPoints,
       deltaPerLevel = pot.deltaPerLevel,
       baseRadius = pot.baseRadius;
+  var materialUrl = material.map.image ? material.map.image.src : EARTHENWARE;
   return {
-    material: material,
+    materialUrl: materialUrl,
     numLevels: numLevels,
     currentPoints: currentPoints,
     deltaPerLevel: deltaPerLevel,
@@ -69221,7 +69235,6 @@ var bundle = function bundle(pot) {
 var alterWall = function alterWall(_ref3) {
   var pot = _ref3.pot,
       event = _ref3.event;
-  console.log("edit pot");
   edit(pot);
   var numLevels = pot.numLevels,
       deltaPerLevel = pot.deltaPerLevel,
@@ -69321,6 +69334,7 @@ three__WEBPACK_IMPORTED_MODULE_0__["Mesh"].prototype.changeMaterial = function (
     side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"]
   });
   this.material = newMaterial;
+  this.saved = false;
 };
 
 /***/ }),
@@ -69367,6 +69381,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_html_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/html_util */ "./src/util/html_util.js");
 /* harmony import */ var _pot__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pot */ "./src/pot.js");
 /* harmony import */ var _util_threejs_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/threejs_util */ "./src/util/threejs_util.js");
+/* harmony import */ var _dimension_slider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dimension_slider */ "./src/dimension_slider.js");
+
 
 
 
@@ -69393,6 +69409,7 @@ var createSaveStatusIndicator = function createSaveStatusIndicator(pot) {
         pot.saved = false;
         Object(_pot__WEBPACK_IMPORTED_MODULE_1__["updatePotFromStorage"])(pot, Object(_pot__WEBPACK_IMPORTED_MODULE_1__["bundle"])(newPot));
         updateSaveStatusIndicator(pot);
+        Object(_dimension_slider__WEBPACK_IMPORTED_MODULE_3__["resetSliders"])(pot);
       }
     })]
   });

@@ -3,6 +3,7 @@ import {
 } from "./util/html_util"
 import { createDefaultPot, updatePotFromStorage, bundle } from "./pot";
 import { createCamera } from "./util/threejs_util";
+import { resetSliders } from "./dimension_slider";
 
 const SAVE_STATUS = "save-status";
 const SAVE_STATUS_INDICATOR = "save-status-indicator";
@@ -31,6 +32,7 @@ export const createSaveStatusIndicator = pot => {
           pot.saved = false;
           updatePotFromStorage(pot, bundle(newPot));
           updateSaveStatusIndicator(pot);
+          resetSliders(pot);
         }
       }),
     ]

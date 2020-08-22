@@ -12,6 +12,15 @@ const changePotField = (pot, id, field, newValue) => {
 
 }
 
+export const resetSliders = (pot) => {
+  const heightInfo = sliderInfo(pot, HEIGHT_SLIDER);
+  const widthInfo = sliderInfo(pot, WIDTH_SLIDER);
+
+  heightInfo.onInput(heightInfo.resetValue)();
+  console.log(widthInfo.resetValue);
+  widthInfo.onInput(widthInfo.resetValue)();
+}
+
 const sliderInfo = (pot, id) => {
 
   switch(id) {
@@ -27,7 +36,7 @@ const sliderInfo = (pot, id) => {
             const displayValue = document.getElementById(id + "-value");
             const newValue = value ? value : input.value;
             pot.numLevels = parseInt(newValue);
-            input.value = newValue;
+            input.value = value ? value : input.value;
             displayValue.innerHTML = parseInt(pot.numLevels);
           }
         },
@@ -45,7 +54,9 @@ const sliderInfo = (pot, id) => {
           return e => {
             const input = document.getElementById(id + "-input");
             const displayValue = document.getElementById(id + "-value");
-            const newValue = value ? value * upperRange : input.value / upperRange;
+            
+            const newValue = value ? value : input.value / upperRange;
+            input.value = value ? value * upperRange : input.value;
             pot.baseRadius = parseFloat(newValue);
             displayValue.innerHTML = parseFloat(pot.baseRadius).toFixed(1);
           }

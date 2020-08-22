@@ -195,7 +195,9 @@ input[type=checkbox]:hover {
 .options-overlay .bottom {
   align-items: center;
   flex-direction: column;
+  justify-content: flex-end;
   gap: 8px;
+  height: 100%;
 }
 
 #instructions {

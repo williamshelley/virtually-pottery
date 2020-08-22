@@ -68750,7 +68750,6 @@ var resetSliders = function resetSliders(pot) {
   var heightInfo = sliderInfo(pot, HEIGHT_SLIDER);
   var widthInfo = sliderInfo(pot, WIDTH_SLIDER);
   heightInfo.onInput(heightInfo.resetValue)();
-  console.log(widthInfo.resetValue);
   widthInfo.onInput(widthInfo.resetValue)();
 };
 

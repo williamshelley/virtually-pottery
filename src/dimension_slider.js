@@ -17,7 +17,6 @@ export const resetSliders = (pot) => {
   const widthInfo = sliderInfo(pot, WIDTH_SLIDER);
 
   heightInfo.onInput(heightInfo.resetValue)();
-  console.log(widthInfo.resetValue);
   widthInfo.onInput(widthInfo.resetValue)();
 }
 

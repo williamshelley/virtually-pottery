@@ -11,8 +11,7 @@ const DEFAULT_POT = {
 
 const SAVE_DELAY = 500;
 
-// const EARTHENWARE = "../assets/images/earthenware.png";
-const EARTHENWARE = "https://williamshelley.github.io/virtually-pottery/assets/images/earthenware.png";
+const EARTHENWARE = "assets/images/earthenware.png";
 
 export const createDefaultPot = (camera) => {
   return createPot(merge({}, DEFAULT_POT, { camera }));

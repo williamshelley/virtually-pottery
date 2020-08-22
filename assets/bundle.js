@@ -68986,7 +68986,7 @@ var DEFAULT_POT = {
   numLevels: 20
 };
 var SAVE_DELAY = 500;
-var EARTHENWARE = "../assets/images/earthenware.png";
+var EARTHENWARE = "assets/images/earthenware.png";
 var createDefaultPot = function createDefaultPot(camera) {
   return createPot(Object(lodash__WEBPACK_IMPORTED_MODULE_2__["merge"])({}, DEFAULT_POT, {
     camera: camera

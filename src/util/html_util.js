@@ -10,6 +10,7 @@ export const createNode = ({
   max,
   onInput,
   onClick,
+  href,
   children = [],
 }) => {
   const childNode = document.createElement(tag);
@@ -23,7 +24,8 @@ export const createNode = ({
   if (max) { childNode.max = max; }
   if (onInput) { childNode.oninput = onInput; }
   if (onClick) { childNode.addEventListener("click", onClick); }
-
+  if (href) { childNode.href = href; }
+ 
   if (tag !== "input") {
     children.forEach(child => childNode.appendChild(child));
   }
@@ -55,6 +57,13 @@ export const buttonNode = props => {
 export const pNode = (props) => {
   return createNode({
     tag: "p",
+    ...props
+  });
+}
+
+export const aNode = props => {
+  return createNode({
+    tag: "a",
     ...props
   });
 }

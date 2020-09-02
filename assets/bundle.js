@@ -68896,6 +68896,18 @@ var createInstructions = function createInstructions() {
       innerText: "Click and drag your mouse to alter the pot."
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["pNode"])({
       innerText: "Smooth jagged edges and harsh contours with the smoothing tool!"
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
+      href: "https://github.com/williamshelley",
+      innerText: "GitHub"
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
+      href: "https://willshelley.com/",
+      innerText: "Portfolio Site"
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
+      href: "https://www.linkedin.com/in/william-shelley-280293177/",
+      innerText: "LinkedIn"
+    }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
+      href: "https://angel.co/u/william-shelley",
+      innerText: "AngelList"
     })]
   });
 };
@@ -69510,7 +69522,7 @@ var LAGOON = "6AB187";
 /*!*******************************!*\
   !*** ./src/util/html_util.js ***!
   \*******************************/
-/*! exports provided: createNode, divNode, spanNode, buttonNode, pNode, imgNode, h1Node, h2Node, h3Node, inputNode */
+/*! exports provided: createNode, divNode, spanNode, buttonNode, pNode, aNode, imgNode, h1Node, h2Node, h3Node, inputNode */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -69520,6 +69532,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "spanNode", function() { return spanNode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buttonNode", function() { return buttonNode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pNode", function() { return pNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "aNode", function() { return aNode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "imgNode", function() { return imgNode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h1Node", function() { return h1Node; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h2Node", function() { return h2Node; });
@@ -69543,6 +69556,7 @@ var createNode = function createNode(_ref) {
       max = _ref.max,
       onInput = _ref.onInput,
       onClick = _ref.onClick,
+      href = _ref.href,
       _ref$children = _ref.children,
       children = _ref$children === void 0 ? [] : _ref$children;
   var childNode = document.createElement(tag);
@@ -69587,6 +69601,10 @@ var createNode = function createNode(_ref) {
     childNode.addEventListener("click", onClick);
   }
 
+  if (href) {
+    childNode.href = href;
+  }
+
   if (tag !== "input") {
     children.forEach(function (child) {
       return childNode.appendChild(child);
@@ -69613,6 +69631,11 @@ var buttonNode = function buttonNode(props) {
 var pNode = function pNode(props) {
   return createNode(_objectSpread({
     tag: "p"
+  }, props));
+};
+var aNode = function aNode(props) {
+  return createNode(_objectSpread({
+    tag: "a"
   }, props));
 };
 var imgNode = function imgNode(props) {

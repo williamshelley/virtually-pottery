@@ -268,10 +268,22 @@ div {
   border-radius: 8px;
 }
 
-h1, h2, h3, p, div, input {
+h1, h2, h3, p, div, input, a {
   margin: 0;
   padding: 0;
   color: white;
+  text-decoration: none;
+}
+
+a {
+  text-align: center;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+a:hover {
+  text-decoration: underline;
+  background: rgba(80, 100, 150, 0.5);
 }
 
 /*# sourceMappingURL=main.css.map*/

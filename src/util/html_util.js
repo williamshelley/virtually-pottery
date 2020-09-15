@@ -11,6 +11,7 @@ export const createNode = ({
   onInput,
   onClick,
   href,
+  target,
   children = [],
 }) => {
   const childNode = document.createElement(tag);
@@ -25,6 +26,7 @@ export const createNode = ({
   if (onInput) { childNode.oninput = onInput; }
   if (onClick) { childNode.addEventListener("click", onClick); }
   if (href) { childNode.href = href; }
+  if (target) { childNode.target = target; }
  
   if (tag !== "input") {
     children.forEach(child => childNode.appendChild(child));

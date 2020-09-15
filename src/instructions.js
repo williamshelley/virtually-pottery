@@ -19,22 +19,26 @@ export const createInstructions = () => {
           
           aNode({
             href: "https://github.com/williamshelley",
+            target:"_blank",
             innerText: "GitHub"
           }),
           
           aNode({
             href: "https://willshelley.com/",
+            target:"_blank",
             innerText: "Portfolio Site"
           }),
 
           aNode({
             href: "https://www.linkedin.com/in/william-shelley-280293177/",
-            innerText: "LinkedIn",
+            target:"_blank",
+            innerText: "LinkedIn"
           }),
 
 
           aNode({
             href: "https://angel.co/u/william-shelley",
+            target:"_blank",
             innerText: "AngelList"
           }),
     ]

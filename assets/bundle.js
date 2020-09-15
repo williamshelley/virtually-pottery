@@ -68898,15 +68898,19 @@ var createInstructions = function createInstructions() {
       innerText: "Smooth jagged edges and harsh contours with the smoothing tool!"
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
       href: "https://github.com/williamshelley",
+      target: "_blank",
       innerText: "GitHub"
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
       href: "https://willshelley.com/",
+      target: "_blank",
       innerText: "Portfolio Site"
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
       href: "https://www.linkedin.com/in/william-shelley-280293177/",
+      target: "_blank",
       innerText: "LinkedIn"
     }), Object(_util_html_util__WEBPACK_IMPORTED_MODULE_0__["aNode"])({
       href: "https://angel.co/u/william-shelley",
+      target: "_blank",
       innerText: "AngelList"
     })]
   });
@@ -69557,6 +69561,7 @@ var createNode = function createNode(_ref) {
       onInput = _ref.onInput,
       onClick = _ref.onClick,
       href = _ref.href,
+      target = _ref.target,
       _ref$children = _ref.children,
       children = _ref$children === void 0 ? [] : _ref$children;
   var childNode = document.createElement(tag);
@@ -69603,6 +69608,10 @@ var createNode = function createNode(_ref) {
 
   if (href) {
     childNode.href = href;
+  }
+
+  if (target) {
+    childNode.target = target;
   }
 
   if (tag !== "input") {
